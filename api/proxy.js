@@ -1,6 +1,6 @@
 // =====================================================
 // PROXY — api/proxy.js
-// Fix: guard.js remove + server side link rewriting
+// Fix: guard.js remove + player.php links fix
 // =====================================================
 
 export default async function handler(req, res) {
@@ -49,50 +49,46 @@ export default async function handler(req, res) {
 
     let html = await response.text();
 
-    // ── STEP 1: Harmful scripts remove karo ──
-    // guard.js — ye proxy detect karke redirect karta hai
+    // STEP 1: Harmful scripts remove karo
     html = html.replace(/<script[^>]*rolexcoderz\.in[^>]*><\/script>/gi, "");
     html = html.replace(/<script[^>]*guard\.js[^>]*><\/script>/gi, "");
-    // Koi bhi rolexcoderz.in script
     html = html.replace(/<script[^>]*rolexcoderz\.in[^>]*>[\s\S]*?<\/script>/gi, "");
 
-    // ── STEP 2: <base> tag hatao ──
+    // STEP 2: <base> tag hatao
     html = html.replace(/<base[^>]*>/gi, "");
 
-    // ── STEP 3: Static assets fix ──
+    // STEP 3: Static assets fix
     html = html
       .replace(/src="\/([^"]*?)"/g, `src="${ORIGIN}/$1"`)
       .replace(/src='\/([^']*?)'/g, `src='${ORIGIN}/$1'`)
       .replace(/href="\/([^"]*?\.(css|woff2?|ttf|eot|ico))"/gi, `href="${ORIGIN}/$1"`)
       .replace(/href='\/([^']*?\.(css|woff2?|ttf|eot|ico))'/gi, `href='${ORIGIN}/$1'`);
 
-    // ── STEP 4: Server side — sab rolexcoderz.com links rewrite karo ──
+    // STEP 4: Server side link rewrite — rolexcoderz.com ke sab links
+    function rewriteHref(rest) {
+      let p = rest;
+      if (p === "/" || p === "") return null; // home — chhodo
+      if (p.startsWith("/")) p = p.slice(1);
+      if (p === "" || p.startsWith("?")) {
+        const qs = rest.startsWith("?") ? rest : rest.slice(rest.indexOf("?"));
+        p = `MissionJeet/content/index.php${qs}`;
+      }
+      return `${MY_PROXY}?path=${encodeURIComponent(p)}`;
+    }
+
     html = html.replace(
       /href="https?:\/\/rolexcoderz\.com([^"]*)"/gi,
       (match, rest) => {
-        let p = rest;
-        if (p === "/" || p === "") return match; // home link — chhodo
-        if (p.startsWith("/")) p = p.slice(1);
-        // Root query string — folder links
-        if (p === "" || p.startsWith("?")) {
-          const qs = rest.startsWith("?") ? rest : rest.slice(rest.indexOf("?"));
-          p = `MissionJeet/content/index.php${qs}`;
-        }
-        return `href="${MY_PROXY}?path=${encodeURIComponent(p)}"`;
+        const rewritten = rewriteHref(rest);
+        return rewritten ? `href="${rewritten}"` : match;
       }
     );
 
     html = html.replace(
       /href='https?:\/\/rolexcoderz\.com([^']*)'/gi,
       (match, rest) => {
-        let p = rest;
-        if (p === "/" || p === "") return match;
-        if (p.startsWith("/")) p = p.slice(1);
-        if (p === "" || p.startsWith("?")) {
-          const qs = rest.startsWith("?") ? rest : rest.slice(rest.indexOf("?"));
-          p = `MissionJeet/content/index.php${qs}`;
-        }
-        return `href='${MY_PROXY}?path=${encodeURIComponent(p)}'`;
+        const rewritten = rewriteHref(rest);
+        return rewritten ? `href='${rewritten}'` : match;
       }
     );
 
@@ -102,15 +98,12 @@ export default async function handler(req, res) {
       (match, rest) => `href="${MY_PROXY}?path=${encodeURIComponent("MissionJeet/" + rest)}"`
     );
 
-    // ── STEP 5: JS interceptor — backup + guard block ──
+    // STEP 5: JS interceptor
     const interceptor = `
 <script>
 (function() {
   var PROXY = "${MY_PROXY}";
   var ORIGIN = "${ORIGIN}";
-
-  // Guard — koi bhi rolexcoderz.in pe redirect hone se roko
-  var _loc = Object.getOwnPropertyDescriptor(window, 'location');
   var blockedDomains = ["rolexcoderz.in"];
 
   function isBlocked(url) {
@@ -147,10 +140,7 @@ export default async function handler(req, res) {
     if (!el) return;
     var href = el.getAttribute("href");
     if (!href || href.startsWith(PROXY)) return;
-
-    // Blocked domain — rok do
     if (isBlocked(href)) { e.preventDefault(); e.stopPropagation(); return; }
-
     var proxyUrl = toProxy(href);
     if (!proxyUrl) return;
     e.preventDefault();
@@ -215,5 +205,7 @@ export default async function handler(req, res) {
   } catch (err) {
     console.error("Proxy error:", err);
     return res.status(500).json({ success: false, error: err.message });
+  }
+          }500).json({ success: false, error: err.message });
   }
 }
