@@ -16,7 +16,7 @@ export default async function handler(req, res) {
 
     const targetUrl = "https://rolexcoderz.com/" + path;
 
-    console.log("Proxy Fetching:", targetUrl);
+    console.log("Fetching:", targetUrl);
 
     const response = await fetch(targetUrl, {
       headers: {
@@ -29,39 +29,16 @@ export default async function handler(req, res) {
 
     let data = await response.text();
 
-    // =========================
-    // 1️⃣ FIX absolute assets
-    // =========================
+    // OPTIONAL: only fix absolute assets (safe)
     data = data
       .replaceAll('src="/', 'src="https://rolexcoderz.com/')
       .replaceAll('href="/', 'href="https://rolexcoderz.com/');
 
-    // =========================
-    // 2️⃣ IMPORTANT: rewrite ONLY MissionJeet links
-    // (safe proxy routing)
-    // =========================
-    data = data.replaceAll(
-      'href="/MissionJeet/',
-      'href="/api/proxy?path=MissionJeet/'
+    res.setHeader(
+      "Content-Type",
+      response.headers.get("content-type") || "text/html"
     );
 
-    data = data.replaceAll(
-      'src="/MissionJeet/',
-      'src="/api/proxy?path=MissionJeet/'
-    );
-
-    // =========================
-    // 3️⃣ Prevent broken double proxy injection
-    // =========================
-    data = data.replaceAll(
-      '/api/proxy?/api/proxy?',
-      '/api/proxy?'
-    );
-
-    const contentType =
-      response.headers.get("content-type") || "text/html";
-
-    res.setHeader("Content-Type", contentType);
     res.status(response.status).send(data);
 
   } catch (err) {
