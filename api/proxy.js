@@ -1,5 +1,5 @@
 // =====================================================
-// PROXY — api/proxy.js
+// PROXY â€” api/proxy.js
 // Fix: guard.js remove + player.php links fix
 // =====================================================
 
@@ -64,10 +64,10 @@ export default async function handler(req, res) {
       .replace(/href="\/([^"]*?\.(css|woff2?|ttf|eot|ico))"/gi, `href="${ORIGIN}/$1"`)
       .replace(/href='\/([^']*?\.(css|woff2?|ttf|eot|ico))'/gi, `href='${ORIGIN}/$1'`);
 
-    // STEP 4: Server side link rewrite — rolexcoderz.com ke sab links
+    // STEP 4: Server side link rewrite â€” rolexcoderz.com ke sab links
     function rewriteHref(rest) {
       let p = rest;
-      if (p === "/" || p === "") return null; // home — chhodo
+      if (p === "/" || p === "") return null; // home â€” chhodo
       if (p.startsWith("/")) p = p.slice(1);
       if (p === "" || p.startsWith("?")) {
         const qs = rest.startsWith("?") ? rest : rest.slice(rest.indexOf("?"));
@@ -104,6 +104,109 @@ export default async function handler(req, res) {
 (function() {
   var PROXY = "${MY_PROXY}";
   var ORIGIN = "${ORIGIN}";
+  var blockedDomains = ["rolexcoderz.in"];
+
+  function isBlocked(url) {
+    try {
+      var u = new URL(url, window.location.href);
+      return blockedDomains.some(function(d) { return u.hostname.includes(d); });
+    } catch(e) { return false; }
+  }
+
+  function toProxy(href) {
+    if (!href) return null;
+    if (href === "#" || href.startsWith("javascript") || href.startsWith("mailto")) return null;
+    if (href.startsWith(PROXY)) return null;
+
+    var abs;
+    try { abs = new URL(href, ORIGIN + "/").href; } catch(e) { return null; }
+    if (!abs.startsWith(ORIGIN)) return null;
+
+    var path = abs.slice(ORIGIN.length);
+    if (path.startsWith("/")) path = path.slice(1);
+
+    if (path === "" || path.startsWith("?")) {
+      var qIdx = abs.indexOf("?");
+      var qs = qIdx !== -1 ? abs.slice(qIdx) : "";
+      path = "MissionJeet/content/index.php" + qs;
+    }
+
+    return PROXY + "?path=" + encodeURIComponent(path);
+  }
+
+  // Click interceptor
+  document.addEventListener("click", function(e) {
+    var el = e.target.closest("a[href]");
+    if (!el) return;
+    var href = el.getAttribute("href");
+    if (!href || href.startsWith(PROXY)) return;
+    if (isBlocked(href)) { e.preventDefault(); e.stopPropagation(); return; }
+    var proxyUrl = toProxy(href);
+    if (!proxyUrl) return;
+    e.preventDefault();
+    e.stopPropagation();
+    window.location.href = proxyUrl;
+  }, true);
+
+  // fetch intercept
+  var _fetch = window.fetch;
+  window.fetch = function(url, opts) {
+    if (typeof url === "string") {
+      if (isBlocked(url)) return Promise.resolve(new Response("", {status: 200}));
+      var p = toProxy(url); if (p) url = p;
+    }
+    return _fetch.call(this, url, opts);
+  };
+
+  // XHR intercept
+  var _open = XMLHttpRequest.prototype.open;
+  XMLHttpRequest.prototype.open = function(method, url) {
+    if (typeof url === "string") {
+      if (isBlocked(url)) url = "about:blank";
+      else { var p = toProxy(url); if (p) url = p; }
+    }
+    return _open.apply(this, arguments);
+  };
+
+  // pushState intercept
+  var _push = history.pushState;
+  history.pushState = function(state, title, url) {
+    if (url) {
+      if (isBlocked(String(url))) return;
+      var p = toProxy(String(url)); if (p) { window.location.href = p; return; }
+    }
+    return _push.apply(this, arguments);
+  };
+
+  // replaceState intercept
+  var _replace = history.replaceState;
+  history.replaceState = function(state, title, url) {
+    if (url) {
+      if (isBlocked(String(url))) return;
+      var p = toProxy(String(url)); if (p) { window.location.href = p; return; }
+    }
+    return _replace.apply(this, arguments);
+  };
+
+  console.log("[PROXY] Interceptor active v5 âœ… â€” guard blocked");
+})();
+<\/script>`;
+
+    if (html.includes("</body>")) {
+      html = html.replace("</body>", interceptor + "\n</body>");
+    } else {
+      html += interceptor;
+    }
+
+    res.setHeader("Content-Type", "text/html; charset=utf-8");
+    res.setHeader("Cache-Control", "no-store");
+    return res.status(200).send(html);
+
+  } catch (err) {
+    console.error("Proxy error:", err);
+    return res.status(500).json({ success: false, error: err.message });
+  }
+}  var ORIGIN = "${ORIGIN}";
   var blockedDomains = ["rolexcoderz.in"];
 
   function isBlocked(url) {
