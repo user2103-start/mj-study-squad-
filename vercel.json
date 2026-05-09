@@ -1,8 +1,8 @@
 {
-  "version": 2,
   "functions": {
     "api/proxy.js": {
-      "runtime": "nodejs20.x"
+      "memory": 1024,
+      "maxDuration": 30
     }
   }
 }
