@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Study Squad</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
+<!-- DevTools disable -->
+<script src="https://cdn.jsdelivr.net/npm/disable-devtool@latest/disable-devtool.min.js"></script>
+<style>
+:root {
+  --bg:#f7f5f0;--surface:#ffffff;--surface2:#f0ede8;
+  --border:#e8e4dc;--border2:#d4cfc6;
+  --tp:#1a1612;--ts:#6b6560;--tm:#9b948c;
+  --accent:#d97706;--accent2:#b45309;--accent-bg:#fef3c7;
+  --blue:#2563eb;--green:#059669;--red:#dc2626;
+  --radius:16px;--radius-sm:10px;
+  --shadow:0 1px 3px rgba(0,0,0,0.06),0 4px 16px rgba(0,0,0,0.06);
+  --shadow-md:0 2px 8px rgba(0,0,0,0.08),0 8px 32px rgba(0,0,0,0.08);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tp);min-height:100vh;-webkit-font-smoothing:antialiased;user-select:none;}
+
+.page{display:none;min-height:100vh;animation:fadeUp 0.4s ease both;}
+.page.active{display:block;}
+#playerPage.active{display:flex;flex-direction:column;background:#000;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* LANDING */
+.wrap{max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.hero-section{padding:60px 0 48px;text-align:center;}
+.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--accent-bg);border:1px solid #fcd34d;border-radius:100px;padding:6px 16px;font-size:0.78rem;font-weight:600;color:var(--accent2);letter-spacing:0.02em;margin-bottom:28px;}
+.hero-title{font-family:'Instrument Serif',serif;font-size:clamp(2.4rem,8vw,3.6rem);font-weight:400;line-height:1.15;color:var(--tp);margin-bottom:20px;letter-spacing:-0.02em;}
+.hero-title em{font-style:italic;color:var(--accent);}
+.hero-sub{font-size:1.05rem;color:var(--ts);line-height:1.65;max-width:480px;margin:0 auto 36px;font-weight:300;}
+.hero-cta{display:inline-flex;align-items:center;gap:8px;background:var(--tp);color:#fff;border:none;padding:14px 28px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:500;cursor:pointer;transition:all 0.2s;}
+.hero-cta:hover{background:#2d2925;transform:translateY(-1px);box-shadow:var(--shadow-md);}
+
+.stats-row{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin:48px 0;}
+.stat{flex:1;padding:20px 16px;text-align:center;border-right:1px solid var(--border);}
+.stat:last-child{border-right:none;}
+.stat-num{font-family:'Instrument Serif',serif;font-size:1.8rem;color:var(--tp);display:block;line-height:1;margin-bottom:4px;}
+.stat-label{font-size:0.72rem;color:var(--tm);font-weight:500;text-transform:uppercase;letter-spacing:0.06em;}
+
+.section-divider{display:flex;align-items:center;gap:16px;margin:40px 0 28px;}
+.section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.section-divider span{font-size:0.78rem;color:var(--tm);font-weight:500;text-transform:uppercase;letter-spacing:0.1em;white-space:nowrap;}
+
+/* BATCH CARDS */
+.batch-cards{display:flex;flex-direction:column;gap:16px;}
+.batch-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all 0.25s;display:block;width:100%;text-align:left;font-family:'DM Sans',sans-serif;color:var(--tp);box-shadow:var(--shadow);}
+.batch-card:hover{border-color:var(--border2);box-shadow:var(--shadow-md);transform:translateY(-2px);}
+.batch-card:active{transform:translateY(0);}
+.batch-img{width:100%;height:200px;object-fit:cover;display:block;background:var(--surface2);}
+.batch-body{padding:20px 22px 22px;}
+.batch-tags{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.tag{display:inline-flex;align-items:center;gap:4px;font-size:0.7rem;font-weight:600;letter-spacing:0.04em;padding:3px 10px;border-radius:100px;text-transform:uppercase;}
+.tag-new{background:#dcfce7;color:#166534;border:1px solid #bbf7d0;}
+.tag-trending{background:#fef3c7;color:#92400e;border:1px solid #fde68a;}
+.tag-jee{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;}
+.tag-neet{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;}
+.batch-title{font-family:'Instrument Serif',serif;font-size:1.4rem;font-weight:400;line-height:1.3;margin-bottom:6px;}
+.batch-subtitle{font-size:0.85rem;color:var(--ts);margin-bottom:16px;font-weight:400;}
+.batch-footer{display:flex;align-items:center;justify-content:space-between;}
+.batch-price{display:flex;align-items:baseline;gap:8px;}
+.price-offer{font-size:1.2rem;font-weight:600;color:var(--tp);}
+.price-mrp{font-size:0.85rem;color:var(--tm);text-decoration:line-through;}
+.price-disc{font-size:0.75rem;font-weight:600;color:var(--green);}
+.btn-start{display:inline-flex;align-items:center;gap:6px;background:var(--tp);color:#fff;border:none;padding:10px 20px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:500;cursor:pointer;transition:all 0.2s;flex-shrink:0;}
+.btn-start:hover{background:#2d2925;}
+
+.formula-strip{margin:48px 0 0;padding:24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);display:flex;flex-direction:column;gap:14px;}
+.formula-item{display:flex;align-items:center;gap:14px;}
+.formula-icon{width:36px;height:36px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.fi-math{background:#eff6ff;}.fi-phy{background:#fdf4ff;}.fi-chem{background:#fefce8;}
+.formula-text{font-family:'Courier New',monospace;font-size:0.9rem;font-weight:600;color:var(--tp);}
+.formula-label{font-size:0.72rem;color:var(--tm);margin-top:1px;}
+.landing-footer{text-align:center;padding:40px 0 20px;font-size:0.8rem;color:var(--tm);border-top:1px solid var(--border);margin-top:48px;}
+
+/* COURSE PAGE */
+.course-wrap{max-width:680px;margin:0 auto;padding:0 20px 60px;}
+.back-row{padding:24px 0 0;display:flex;align-items:center;gap:12px;}
+.back-btn{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);color:var(--ts);padding:8px 16px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;cursor:pointer;transition:all 0.2s;}
+.back-btn:hover{border-color:var(--border2);color:var(--tp);}
+.bc-text{font-size:0.82rem;color:var(--tm);}
+.bc-link{cursor:pointer;color:var(--blue);}
+.bc-sep{color:var(--border2);}
+.bc-cur{color:var(--tp);font-weight:500;}
+
+.course-hero-img{width:100%;height:220px;object-fit:cover;border-radius:var(--radius);display:block;margin:20px 0;background:var(--surface2);box-shadow:var(--shadow);}
+.course-hero-ph{width:100%;height:220px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:5rem;background:var(--surface2);margin:20px 0;box-shadow:var(--shadow);}
+.course-tags{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
+.course-title-el{font-family:'Instrument Serif',serif;font-size:1.8rem;font-weight:400;line-height:1.2;margin-bottom:8px;letter-spacing:-0.02em;}
+.course-meta{font-size:0.85rem;color:var(--ts);margin-bottom:20px;}
+
+.pkg-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;display:flex;align-items:center;gap:14px;margin-bottom:24px;box-shadow:var(--shadow);}
+.pkg-img{width:60px;height:60px;border-radius:var(--radius-sm);object-fit:cover;flex-shrink:0;}
+.pkg-label{font-size:0.68rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:4px;}
+.pkg-title{font-size:0.9rem;font-weight:500;color:var(--tp);line-height:1.3;}
+
+.tabs-bar{display:flex;border-bottom:1px solid var(--border);margin-bottom:28px;}
+.tab-item{padding:12px 20px;font-size:0.85rem;font-weight:500;color:var(--tm);cursor:pointer;border:none;background:transparent;font-family:'DM Sans',sans-serif;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.2s;}
+.tab-item:hover{color:var(--ts);}
+.tab-item.active{color:var(--tp);border-bottom-color:var(--tp);}
+
+.ov-desc{font-size:0.9rem;line-height:1.75;color:var(--ts);margin-bottom:24px;}
+.ov-desc img{max-width:100%;border-radius:var(--radius-sm);margin:8px 0;}
+.ov-desc h1,.ov-desc h2,.ov-desc h3{font-family:'Instrument Serif',serif;font-weight:400;color:var(--tp);margin:16px 0 8px;}
+.ov-desc strong{color:var(--tp);font-weight:600;}
+.ov-desc p{margin-bottom:10px;}
+.ov-desc ol,.ov-desc ul{padding-left:20px;margin-bottom:10px;}
+.ov-desc li{margin-bottom:6px;}
+
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.sec-title{font-size:0.72rem;font-weight:600;color:var(--tm);text-transform:uppercase;letter-spacing:0.1em;}
+.sec-count{font-size:0.72rem;color:var(--tm);background:var(--surface2);border:1px solid var(--border);padding:2px 8px;border-radius:100px;}
+
+/* LIVE */
+.live-card{background:#fff5f5;border:1px solid #fecaca;border-radius:var(--radius);padding:16px 18px;display:flex;align-items:center;gap:14px;cursor:pointer;width:100%;text-align:left;font-family:'DM Sans',sans-serif;color:var(--tp);transition:all 0.2s;margin-bottom:10px;}
+.live-card:hover{box-shadow:var(--shadow);}
+.live-dot{width:10px;height:10px;border-radius:50%;background:var(--red);flex-shrink:0;animation:lp 1.4s ease-in-out infinite;box-shadow:0 0 0 0 rgba(220,38,38,0.4);}
+@keyframes lp{0%{box-shadow:0 0 0 0 rgba(220,38,38,0.4);}70%{box-shadow:0 0 0 8px rgba(220,38,38,0);}100%{box-shadow:0 0 0 0 rgba(220,38,38,0);}}
+.live-lbl{font-size:0.68rem;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:0.08em;}
+.live-name{font-size:0.9rem;font-weight:500;flex:1;}
+.join-btn{background:var(--red);color:white;border:none;padding:7px 14px;border-radius:100px;font-size:0.75rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;flex-shrink:0;}
+
+/* FOLDERS */
+.folders-list{display:flex;flex-direction:column;gap:10px;margin-bottom:28px;}
+.folder-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;cursor:pointer;overflow:hidden;transition:all 0.22s;width:100%;text-align:left;font-family:'DM Sans',sans-serif;color:var(--tp);box-shadow:var(--shadow);}
+.folder-card:hover{border-color:var(--border2);box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.folder-card:active{transform:translateY(0);}
+.folder-img{width:80px;height:80px;object-fit:cover;flex-shrink:0;display:block;}
+.folder-content{flex:1;padding:14px 16px;}
+.folder-name{font-size:0.92rem;font-weight:500;margin-bottom:4px;line-height:1.3;}
+.folder-meta{font-size:0.75rem;color:var(--tm);}
+.folder-arr{padding:0 16px;color:var(--tm);font-size:0.9rem;flex-shrink:0;}
+
+/* VIDEOS */
+.videos-list{display:flex;flex-direction:column;gap:8px;}
+.video-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;gap:14px;padding:14px 16px;cursor:pointer;width:100%;text-align:left;font-family:'DM Sans',sans-serif;color:var(--tp);transition:all 0.22s;box-shadow:var(--shadow);}
+.video-card:hover{border-color:var(--border2);box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.video-card:active{transform:translateY(0);}
+.video-thumb{width:80px;height:50px;border-radius:var(--radius-sm);object-fit:cover;flex-shrink:0;display:block;background:var(--surface2);}
+.play-circle{width:44px;height:44px;border-radius:50%;flex-shrink:0;background:var(--tp);display:flex;align-items:center;justify-content:center;color:white;font-size:0.9rem;}
+.video-content{flex:1;min-width:0;}
+.video-name{font-size:0.88rem;font-weight:500;margin-bottom:3px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.video-meta{font-size:0.74rem;color:var(--tm);}
+.hd-badge{font-size:0.65rem;font-weight:700;color:var(--blue);background:#eff6ff;border:1px solid #bfdbfe;padding:2px 7px;border-radius:4px;flex-shrink:0;text-transform:uppercase;letter-spacing:0.04em;}
+
+/* STATE */
+.state-box{padding:60px 20px;text-align:center;}
+.state-spin{width:32px;height:32px;border-radius:50%;border:2px solid var(--border2);border-top-color:var(--tp);animation:spin 0.8s linear infinite;margin:0 auto 16px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.state-box p{font-size:0.88rem;color:var(--tm);}
+.state-box h3{font-family:'Instrument Serif',serif;font-size:1.2rem;margin-bottom:8px;}
+.retry-btn{margin-top:16px;background:var(--tp);color:white;border:none;padding:10px 22px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:0.85rem;font-weight:500;cursor:pointer;}
+
+/* PLAYER */
+.p-nav{display:flex;align-items:center;gap:12px;padding:12px 16px;background:rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.08);flex-shrink:0;}
+.p-back{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,0.1);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:white;font-size:0.9rem;transition:all 0.2s;flex-shrink:0;}
+.p-back:hover{background:rgba(255,255,255,0.18);}
+.p-title{font-size:0.88rem;font-weight:500;color:rgba(255,255,255,0.9);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.p-main{flex:1;display:flex;align-items:center;justify-content:center;background:#000;position:relative;min-height:240px;}
+#pvideo{width:100%;max-height:calc(100vh - 100px);display:block;}
+.p-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#0a0a0a;z-index:10;padding:24px;text-align:center;}
+.p-spin{width:40px;height:40px;border-radius:50%;border:2px solid rgba(255,255,255,0.15);border-top-color:rgba(255,255,255,0.8);animation:spin 0.8s linear infinite;margin-bottom:14px;}
+.p-txt{font-size:0.85rem;color:rgba(255,255,255,0.5);}
+.p-h{font-size:1rem;font-weight:500;color:white;margin:10px 0 6px;}
+.p-sub{font-size:0.82rem;color:rgba(255,255,255,0.4);margin-bottom:16px;}
+.q-strip{display:flex;align-items:center;gap:8px;padding:10px 16px;background:#111;border-top:1px solid #222;flex-shrink:0;flex-wrap:wrap;}
+.q-strip span{font-size:0.72rem;color:rgba(255,255,255,0.4);font-weight:500;}
+.q-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);padding:4px 12px;border-radius:100px;font-family:'DM Sans',sans-serif;font-weight:500;font-size:0.75rem;cursor:pointer;transition:all 0.2s;}
+.q-btn:hover,.q-btn.active{background:white;border-color:white;color:#000;}
+</style>
+</head>
+<body>
+
+<!-- LANDING -->
+<div class="page active" id="landingPage">
+  <div class="wrap">
+    <div class="hero-section">
+      <div class="hero-eyebrow">⚡ JEE & NEET 2026–28</div>
+      <h1 class="hero-title">Master <em>JEE</em> &<br/><em>NEET</em> with<br/>Study Squad</h1>
+      <p class="hero-sub">India's most comprehensive learning platform. Premium video lectures, study materials, and live classes — completely free.</p>
+      <button class="hero-cta" onclick="document.querySelector('.batch-cards').scrollIntoView({behavior:'smooth'})">Explore Batches ↓</button>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat"><span class="stat-num">50k+</span><span class="stat-label">Students</span></div>
+      <div class="stat"><span class="stat-num">1000+</span><span class="stat-label">Lectures</span></div>
+      <div class="stat"><span class="stat-num">24/7</span><span class="stat-label">Access</span></div>
+    </div>
+
+    <div class="section-divider"><span>Choose Your Batch</span></div>
+
+    <div class="batch-cards" id="batchCards">
+      <!-- JEE 151 -->
+      <button class="batch-card" id="card151" onclick="openCourse({id:'151',name:'Drona JEE',type:'jee',pkgId:'107'})">
+        <div style="width:100%;height:200px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:3rem;" id="thumb151">⏳</div>
+        <div class="batch-body">
+          <div class="batch-tags" id="tags151"><span class="tag tag-jee">JEE 2028</span></div>
+          <div class="batch-title" id="title151">Drona JEE — Class 11th</div>
+          <div class="batch-subtitle">Physics, Chemistry & Mathematics</div>
+          <div class="batch-footer">
+            <div class="batch-price" id="price151"><span class="price-offer">₹4,999</span><span class="price-mrp">₹6,000</span><span class="price-disc">17% off</span></div>
+            <span class="btn-start">Start Learning →</span>
+          </div>
+        </div>
+      </button>
+
+      <!-- NEET 152 -->
+      <button class="batch-card" id="card152" onclick="openCourse({id:'152',name:'Drona NEET',type:'neet',pkgId:'107'})">
+        <div style="width:100%;height:200px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:3rem;" id="thumb152">⏳</div>
+        <div class="batch-body">
+          <div class="batch-tags" id="tags152"><span class="tag tag-neet">NEET 2028</span></div>
+          <div class="batch-title" id="title152">Drona NEET — Class 11th</div>
+          <div class="batch-subtitle">Physics, Chemistry & Biology</div>
+          <div class="batch-footer">
+            <div class="batch-price" id="price152"><span class="price-offer">₹4,999</span><span class="price-mrp">₹6,000</span><span class="price-disc">17% off</span></div>
+            <span class="btn-start">Start Learning →</span>
+          </div>
+        </div>
+      </button>
+    </div>
+
+    <div class="formula-strip">
+      <div class="formula-item"><div class="formula-icon fi-math">∫</div><div><div class="formula-text">∫₀^∞ e^{-x²} dx = √π/2</div><div class="formula-label">Gaussian Integral — Mathematics</div></div></div>
+      <div class="formula-item"><div class="formula-icon fi-phy">⚡</div><div><div class="formula-text">E = mc² | F = dp/dt</div><div class="formula-label">Mass-Energy Equivalence — Physics</div></div></div>
+      <div class="formula-item"><div class="formula-icon fi-chem">⚗</div><div><div class="formula-text">K_eq = [C]ᶜ[D]ᵈ / [A]ᵃ[B]ᵇ</div><div class="formula-label">Chemical Equilibrium — Chemistry</div></div></div>
+    </div>
+    <div class="landing-footer">Study Squad · All content powered by Mission JEET</div>
+  </div>
+</div>
+
+<!-- COURSE PAGE -->
+<div class="page" id="coursePage">
+  <div class="course-wrap">
+    <div class="back-row">
+      <button class="back-btn" id="cBackBtn">← Back</button>
+      <span class="bc-text">
+        <span class="bc-link" onclick="showPage('landingPage')">Home</span>
+        <span class="bc-sep"> › </span>
+        <span class="bc-cur" id="bcCur">Course</span>
+      </span>
+    </div>
+    <div id="cHero"><div class="course-hero-ph">⏳</div></div>
+    <div class="course-tags" id="cTags"></div>
+    <div class="course-title-el" id="cTitle">Loading...</div>
+    <div class="course-meta" id="cMeta"></div>
+    <div id="pkgCard"></div>
+    <div class="tabs-bar">
+      <button class="tab-item active" id="tabOv" onclick="switchTab('ov')">Overview</button>
+      <button class="tab-item" id="tabCt" onclick="switchTab('ct')">Content</button>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div id="ovPane">
+      <div class="state-box" id="ovLoad"><div class="state-spin"></div><p>Loading overview...</p></div>
+      <div id="ovBody" style="display:none;"></div>
+    </div>
+
+    <!-- CONTENT -->
+    <div id="ctPane" style="display:none;">
+      <div id="folderBc" style="display:flex;align-items:center;gap:6px;font-size:0.82rem;color:var(--tm);margin-bottom:20px;flex-wrap:wrap;display:none;"></div>
+      <div id="liveSection" style="display:none;">
+        <div class="sec-head"><div class="sec-title">🔴 Live Now</div></div>
+        <div id="liveCards" style="margin-bottom:24px;"></div>
+      </div>
+      <div class="state-box" id="ctLoad"><div class="state-spin"></div><p>Fetching content...</p></div>
+      <div class="state-box" id="ctErr" style="display:none;"><h3>Couldn't load</h3><p id="ctErrMsg"></p><button class="retry-btn" onclick="loadContent()">Try again</button></div>
+      <div id="ctData" style="display:none;">
+        <div id="foldersSection" style="display:none;">
+          <div class="sec-head"><div class="sec-title">Folders</div><div class="sec-count" id="fCount"></div></div>
+          <div class="folders-list" id="foldersList"></div>
+        </div>
+        <div id="videosSection" style="display:none;">
+          <div class="sec-head" style="margin-top:24px;"><div class="sec-title">Videos</div><div class="sec-count" id="vCount"></div></div>
+          <div class="videos-list" id="videosList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PLAYER -->
+<div class="page" id="playerPage">
+  <div class="p-nav">
+    <button class="p-back" id="pBack">←</button>
+    <div class="p-title" id="pTitle">Video</div>
+  </div>
+  <div class="p-main">
+    <div class="p-overlay" id="pLoad"><div class="p-spin"></div><div class="p-txt" id="pLoadTxt">Loading...</div></div>
+    <div class="p-overlay" id="pErr" style="display:none;"><div style="font-size:2.5rem;margin-bottom:12px;">⚠️</div><div class="p-h">Couldn't load video</div><div class="p-sub" id="pErrMsg"></div><button class="retry-btn" onclick="goBackPlayer()">Go back</button></div>
+    <video id="pvideo" playsinline controls></video>
+  </div>
+  <div class="q-strip" id="qStrip" style="display:none;"><span>Quality:</span><div id="qBtns" style="display:flex;gap:6px;flex-wrap:wrap;"></div></div>
+</div>
+
+<script>
+// ── SECURITY ──
+// Disable right click
+document.addEventListener('contextmenu', e => e.preventDefault());
+// Disable F12, Ctrl+Shift+I, Ctrl+U etc.
+document.addEventListener('keydown', e => {
+  if (e.key === 'F12' || 
+      (e.ctrlKey && e.shiftKey && ['I','J','C'].includes(e.key)) ||
+      (e.ctrlKey && e.key === 'U') ||
+      (e.ctrlKey && e.key === 'S')) {
+    e.preventDefault(); return false;
+  }
+});
+// Clear console periodically
+setInterval(() => { try { console.clear(); } catch(e){} }, 1000);
+// Override console methods
+(function() {
+  const noop = () => {};
+  ['log','warn','error','info','debug','table','dir'].forEach(m => {
+    try { console[m] = noop; } catch(e){}
+  });
+})();
+// Detect devtools open
+(function() {
+  const threshold = 160;
+  setInterval(() => {
+    if (window.outerWidth - window.innerWidth > threshold || 
+        window.outerHeight - window.innerHeight > threshold) {
+      document.body.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100vh;font-family:sans-serif;font-size:1.2rem;color:#666;">Access Restricted</div>';
+    }
+  }, 500);
+})();
+
+// ── CONFIG ──
+const PROXY = "/api/proxy";
+
+// ── STATE ──
+let S = { course:null, folderId:"0", folderTitle:"", tab:"ov", ovLoaded:false, ctLoaded:false, stack:[], hls:null };
+
+// ── API ──
+async function apiPost(action, body) {
+  const r = await fetch(`${PROXY}?action=${action}`, {
+    method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify(body)
+  });
+  return r.json();
+}
+async function apiGet(action, params) {
+  const q = new URLSearchParams({action,...params});
+  const r = await fetch(`${PROXY}?${q}`);
+  return r.json();
+}
+
+// ── PAGES ──
+function showPage(id) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  window.scrollTo(0,0);
+}
+
+// ── LOAD LANDING DATA ──
+async function loadLandingCards() {
+  ['151','152'].forEach(async cid => {
+    try {
+      const data = await apiPost("course", {course_id: cid});
+      const sections = data.data || [];
+      const ov = sections.find(s => s.type === "overview");
+      const details = ov?.data?.find(d => d.layout_type === "details")?.layout_data?.[0];
+      if (!details) return;
+
+      // Thumbnail
+      const thumbEl = document.getElementById(`thumb${cid}`);
+      if (details.thumbnail) {
+        thumbEl.outerHTML = `<img class="batch-img" src="${details.thumbnail}" alt="${details.title}" onerror="this.style.display='none'"/>`;
+      }
+
+      // Title
+      document.getElementById(`title${cid}`).textContent = details.title;
+
+      // Tags
+      const tags = [];
+      if (cid === '151') tags.push(`<span class="tag tag-jee">JEE 2028</span>`);
+      else tags.push(`<span class="tag tag-neet">NEET 2028</span>`);
+      if (details.is_new) tags.push(`<span class="tag tag-new">New</span>`);
+      if (details.is_trending) tags.push(`<span class="tag tag-trending">Trending</span>`);
+      document.getElementById(`tags${cid}`).innerHTML = tags.join("");
+
+      // Price
+      if (details.offer_price) {
+        const mrp = parseFloat(details.mrp).toLocaleString('en-IN');
+        const offer = parseFloat(details.offer_price).toLocaleString('en-IN');
+        const disc = Math.round(details.discount_percentage);
+        document.getElementById(`price${cid}`).innerHTML = `
+          <span class="price-offer">₹${offer}</span>
+          <span class="price-mrp">₹${mrp}</span>
+          <span class="price-disc">${disc}% off</span>`;
+      }
+    } catch(e) {}
+  });
+}
+
+// ── OPEN COURSE ──
+function openCourse(course) {
+  S = {course, folderId:"0", folderTitle:"", tab:"ov", ovLoaded:false, ctLoaded:false, stack:[], hls:null};
+  document.getElementById("cBackBtn").onclick = () => showPage("landingPage");
+  document.getElementById("bcCur").textContent = course.name;
+  document.getElementById("cHero").innerHTML = `<div class="course-hero-ph">⏳</div>`;
+  document.getElementById("cTitle").textContent = course.name;
+  document.getElementById("cMeta").textContent = "";
+  document.getElementById("cTags").innerHTML = "";
+  document.getElementById("pkgCard").innerHTML = "";
+  switchTab("ov");
+  showPage("coursePage");
+  loadOverview();
+}
+
+// ── TABS ──
+function switchTab(tab) {
+  S.tab = tab;
+  document.getElementById("tabOv").classList.toggle("active", tab==="ov");
+  document.getElementById("tabCt").classList.toggle("active", tab==="ct");
+  document.getElementById("ovPane").style.display = tab==="ov" ? "block" : "none";
+  document.getElementById("ctPane").style.display = tab==="ct" ? "block" : "none";
+  if (tab==="ct" && !S.ctLoaded) loadContent();
+}
+
+// ── OVERVIEW ──
+async function loadOverview() {
+  if (S.ovLoaded) return;
+  S.ovLoaded = true;
+  document.getElementById("ovLoad").style.display = "block";
+  document.getElementById("ovBody").style.display = "none";
+  try {
+    const data = await apiPost("course", {course_id: S.course.id});
+    const sections = data.data || [];
+    const ov = sections.find(s => s.type === "overview");
+    const details = ov?.data?.find(d => d.layout_type === "details")?.layout_data?.[0];
+    const packages = ov?.data?.find(d => d.layout_type === "packages")?.layout_data || [];
+
+    if (details) {
+      // Hero image
+      if (details.thumbnail) {
+        document.getElementById("cHero").innerHTML = `<img class="course-hero-img" src="${details.thumbnail}" alt="${details.title}" onerror="this.parentElement.innerHTML='<div class=\\'course-hero-ph\\'>📚</div>'"/>`;
+      }
+      document.getElementById("cTitle").textContent = details.title;
+
+      // Price
+      if (details.offer_price) {
+        const mrp = parseFloat(details.mrp).toLocaleString('en-IN');
+        const offer = parseFloat(details.offer_price).toLocaleString('en-IN');
+        const disc = Math.round(details.discount_percentage);
+        document.getElementById("cMeta").innerHTML = `<span style="font-size:1.1rem;font-weight:600;color:var(--tp);">₹${offer}</span> <span style="color:var(--tm);text-decoration:line-through;font-size:0.9rem;">₹${mrp}</span> <span style="color:var(--green);font-size:0.82rem;font-weight:600;">${disc}% off</span>`;
+      }
+
+      // Tags
+      const tags = [];
+      if (S.course.type==="jee") tags.push(`<span class="tag tag-jee">JEE 2028</span>`);
+      else tags.push(`<span class="tag tag-neet">NEET 2028</span>`);
+      if (details.is_new) tags.push(`<span class="tag tag-new">New</span>`);
+      if (details.is_trending) tags.push(`<span class="tag tag-trending">Trending</span>`);
+      document.getElementById("cTags").innerHTML = tags.join("");
+
+      // Description
+      document.getElementById("ovBody").innerHTML = `<div class="ov-desc">${details.description || ""}</div>`;
+    }
+
+    // Package
+    if (packages.length > 0) {
+      const pkg = packages[0];
+      document.getElementById("pkgCard").innerHTML = `
+        <div class="pkg-card">
+          <img class="pkg-img" src="${pkg.thumbnail}" alt="${pkg.title}" onerror="this.style.display='none'"/>
+          <div><div class="pkg-label">📦 Bundled Package</div><div class="pkg-title">${pkg.title}</div></div>
+        </div>`;
+    }
+
+    document.getElementById("ovLoad").style.display = "none";
+    document.getElementById("ovBody").style.display = "block";
+  } catch(e) {
+    document.getElementById("ovLoad").innerHTML = `<h3>Error</h3><p>${e.message}</p>`;
+  }
+}
+
+// ── CONTENT ──
+function updateFolderBc() {
+  const bc = document.getElementById("folderBc");
+  if (!S.folderTitle) { bc.style.display = "none"; return; }
+  bc.style.display = "flex";
+  bc.innerHTML = `<span style="cursor:pointer;color:var(--blue);" onclick="goRoot()">${S.course?.name}</span><span style="margin:0 4px;">›</span><span style="color:var(--tp);">${S.folderTitle}</span>`;
+  const btn = document.getElementById("cBackBtn");
+  btn.onclick = S.stack.length > 0 ? goBack : () => showPage("landingPage");
+}
+
+function goRoot() {
+  S.folderId="0"; S.folderTitle=""; S.stack=[]; S.ctLoaded=false;
+  updateFolderBc();
+  if (S.tab!=="ct") switchTab("ct"); else loadContent();
+}
+
+function goBack() {
+  if (!S.stack.length) { goRoot(); return; }
+  const prev = S.stack.pop();
+  S.folderId=prev.id; S.folderTitle=prev.title; S.ctLoaded=false;
+  updateFolderBc(); loadContent();
+}
+
+function ctShow(what) {
+  document.getElementById("ctLoad").style.display = what==="load" ? "block" : "none";
+  document.getElementById("ctErr").style.display = what==="err" ? "block" : "none";
+  document.getElementById("ctData").style.display = what==="data" ? "block" : "none";
+}
+
+async function loadContent() {
+  S.ctLoaded=true; ctShow("load");
+  document.getElementById("liveSection").style.display="none";
+  updateFolderBc();
+  try {
+    const data = await apiPost("content", {course_id:S.course.id, folder_id:S.folderId, parent_course_id:"0"});
+    const items = data.data || [];
+    const lives = items.filter(i => i.data?.is_live===1);
+    const folders = items.filter(i => i.type==="folder");
+    const videos = items.filter(i => i.type==="file" && [1,2].includes(Number(i.data?.file_type||i.data?.content_type)));
+
+    renderLive(lives);
+    renderFolders(folders);
+    renderVideos(videos);
+
+    if (!lives.length && !folders.length && !videos.length) {
+      ctShow("err"); document.getElementById("ctErrMsg").textContent="No content found."; return;
+    }
+    ctShow("data");
+  } catch(e) {
+    ctShow("err"); document.getElementById("ctErrMsg").textContent=e.message;
+  }
+}
+
+function renderLive(lives) {
+  if (!lives.length) return;
+  document.getElementById("liveSection").style.display="block";
+  document.getElementById("liveCards").innerHTML="";
+  lives.forEach(l => {
+    const btn = document.createElement("button");
+    btn.className="live-card";
+    btn.innerHTML=`<div class="live-dot"></div><div class="live-lbl">Live</div><div class="live-name">${l.title}</div><button class="join-btn">Join →</button>`;
+    btn.onclick = () => openVideo(l);
+    document.getElementById("liveCards").appendChild(btn);
+  });
+}
+
+function renderFolders(folders) {
+  const sec = document.getElementById("foldersSection");
+  const list = document.getElementById("foldersList");
+  if (!folders.length) { sec.style.display="none"; return; }
+  sec.style.display="block";
+  document.getElementById("fCount").textContent=folders.length;
+  list.innerHTML="";
+  folders.forEach(f => {
+    const btn = document.createElement("button");
+    btn.className="folder-card";
+    const thumb = f.data?.thumbnail;
+    const vc = f.data?.content_counts;
+    const vids = vc ? (vc.video?.paid||0)+(vc.video?.free||0) : 0;
+    const folds = vc ? (vc.folders?.total||0) : 0;
+    const meta = [folds?`${folds} folders`:'', vids?`${vids} videos`:''].filter(Boolean).join(' · ') || 'Tap to open';
+    btn.innerHTML=`
+      ${thumb ? `<img class="folder-img" src="${thumb}" alt="${f.title}" onerror="this.style.display='none'"/>` : ''}
+      <div class="folder-content">
+        <div class="folder-name">${f.title}</div>
+        <div class="folder-meta">${meta}</div>
+      </div>
+      <div class="folder-arr">›</div>`;
+    btn.onclick = () => {
+      S.stack.push({id:S.folderId, title:S.folderTitle});
+      S.folderId = f.entity_id || f.data?.id;
+      S.folderTitle = f.title;
+      S.ctLoaded=false;
+      updateFolderBc(); loadContent();
+    };
+    list.appendChild(btn);
+  });
+}
+
+function renderVideos(videos) {
+  const sec = document.getElementById("videosSection");
+  const list = document.getElementById("videosList");
+  if (!videos.length) { sec.style.display="none"; return; }
+  sec.style.display="block";
+  document.getElementById("vCount").textContent=videos.length;
+  list.innerHTML="";
+  videos.forEach(v => {
+    const btn = document.createElement("button");
+    btn.className="video-card";
+    const thumb = v.data?.thumbnail;
+    const dur = v.data?.duration ? formatDur(v.data.duration) : "";
+    btn.innerHTML=`
+      ${thumb ? `<img class="video-thumb" src="${thumb}" alt="${v.title}" onerror="this.outerHTML='<div class=\\'play-circle\\'>▶</div>'"/>` : `<div class="play-circle">▶</div>`}
+      <div class="video-content">
+        <div class="video-name">${v.title}</div>
+        <div class="video-meta">${dur?dur+' · ':''}Video Lecture</div>
+      </div>
+      <span class="hd-badge">HD</span>`;
+    btn.onclick = () => openVideo(v);
+    list.appendChild(btn);
+  });
+}
+
+function formatDur(s) {
+  if (!s) return "";
+  return `${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`;
+}
+
+// ── PLAYER ──
+async function openVideo(v) {
+  showPage("playerPage");
+  document.getElementById("pTitle").textContent = v.title;
+  document.getElementById("pLoad").style.display="flex";
+  document.getElementById("pErr").style.display="none";
+  document.getElementById("qStrip").style.display="none";
+  document.getElementById("pLoadTxt").textContent="Loading...";
+  document.getElementById("pBack").onclick = goBackPlayer;
+  destroyHLS();
+  try {
+    const contentId = v.entity_id || v.data?.id;
+    const vdcId = v.data?.vdc_id;
+    let m3u8 = null;
+    document.getElementById("pLoadTxt").textContent="Fetching stream...";
+    try {
+      const det = await apiGet("video", {content_id:contentId, course_id:S.course.id});
+      const d = det.data || {};
+      m3u8 = d.hls_url || d.video_url || d.stream_url || d.url;
+      if (!m3u8 && d.vdc_id) m3u8 = buildM3u8(d.vdc_id);
+    } catch(e) {}
+    if (!m3u8 && vdcId) m3u8 = buildM3u8(vdcId);
+    if (!m3u8) throw new Error("Stream URL not found.");
+    document.getElementById("pLoadTxt").textContent="Starting player...";
+    initHLS(m3u8);
+  } catch(e) {
+    document.getElementById("pLoad").style.display="none";
+    document.getElementById("pErr").style.display="flex";
+    document.getElementById("pErrMsg").textContent=e.message;
+  }
+}
+
+function buildM3u8(vdcId) {
+  const p = vdcId.split("_");
+  return `https://d1ji5qpleqhfrc.cloudfront.net/file_library/videos/channel_vod_non_drm_hls/${p[0]}/${vdcId}/${vdcId}_8953428.m3u8`;
+}
+
+function initHLS(url) {
+  const video = document.getElementById("pvideo");
+  destroyHLS();
+  if (Hls.isSupported()) {
+    const hls = new Hls({maxBufferLength:30, maxMaxBufferLength:60});
+    S.hls = hls;
+    hls.loadSource(url);
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED, (e, data) => {
+      document.getElementById("pLoad").style.display="none";
+      renderQuality(data.levels||[]);
+      video.play().catch(()=>{});
+    });
+    hls.on(Hls.Events.ERROR, (e, data) => {
+      if (data.fatal) {
+        document.getElementById("pLoad").style.display="none";
+        document.getElementById("pErr").style.display="flex";
+        document.getElementById("pErrMsg").textContent=data.details||"Stream error";
+      }
+    });
+  } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+    video.src=url;
+    video.addEventListener("loadedmetadata", () => { document.getElementById("pLoad").style.display="none"; video.play(); }, {once:true});
+  } else {
+    document.getElementById("pLoad").style.display="none";
+    document.getElementById("pErr").style.display="flex";
+    document.getElementById("pErrMsg").textContent="Browser does not support HLS.";
+  }
+}
+
+function renderQuality(levels) {
+  if (!levels.length) return;
+  document.getElementById("qStrip").style.display="flex";
+  const btns = document.getElementById("qBtns");
+  btns.innerHTML="";
+  levels.forEach((q,i) => {
+    const btn = document.createElement("button");
+    btn.className="q-btn"+(i===0?" active":"");
+    btn.textContent=q.height?q.height+"p":`Q${i+1}`;
+    btn.onclick=()=>{ if(S.hls) S.hls.currentLevel=i; document.querySelectorAll(".q-btn").forEach((b,j)=>b.classList.toggle("active",j===i)); };
+    btns.appendChild(btn);
+  });
+}
+
+function destroyHLS() {
+  if (S.hls) { try{S.hls.destroy();}catch(e){} S.hls=null; }
+  const v=document.getElementById("pvideo");
+  v.pause(); v.src=""; v.load();
+}
+
+function goBackPlayer() {
+  destroyHLS(); showPage("coursePage");
+  if (S.tab!=="ct") switchTab("ct");
+}
+
+// ── INIT ──
+loadLandingCards();
+</script>
+</body>
+</html>
