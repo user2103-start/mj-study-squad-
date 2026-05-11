@@ -1,12 +1,13 @@
 // api/proxy.js
-// Nexttoppers API — credentials hidden server side
+// Nexttoppers API — all credentials hidden server side
+// Endpoints: course, content, video, live, upcoming
 
 const NT = "https://course.nexttoppers.com";
 const APP_ID = "1772100600";
 const USER_ID = "3245033";
 const TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozMjQ1MDMzLCJhcHBfaWQiOiIxNzcyMTAwNjAwIiwiZGV2aWNlX2lkIjoiNzZjYjlmMGYtNzQ0Ni00ZTJlLThmMjUtOGJmOTJjMTlhMzIzIiwicGxhdGZvcm0iOiIzIiwidXNlcl90eXBlIjoxLCJpYXQiOjE3NzgyMDg4NzQsImV4cCI6MTc4MDgwMDg3NH0.PYW_poPgm1rEUhf6U7x6TJ_2t4eDQgRTxpCms3X0iL8";
 
-const H = {
+const HEADERS = {
   "accept": "application/json, text/plain, */*",
   "app_id": APP_ID,
   "authorization": TOKEN,
@@ -19,13 +20,22 @@ const H = {
   "version": "1"
 };
 
-async function post(endpoint, body) {
-  const r = await fetch(`${NT}${endpoint}`, { method: "POST", headers: H, body: JSON.stringify(body) });
+async function ntPost(endpoint, body) {
+  const r = await fetch(`${NT}${endpoint}`, {
+    method: "POST",
+    headers: HEADERS,
+    body: JSON.stringify(body)
+  });
+  if (!r.ok) throw new Error(`Upstream ${r.status}: ${r.statusText}`);
   return r.json();
 }
 
-async function get(endpoint) {
-  const r = await fetch(`${NT}${endpoint}`, { method: "GET", headers: H });
+async function ntGet(endpoint) {
+  const r = await fetch(`${NT}${endpoint}`, {
+    method: "GET",
+    headers: HEADERS
+  });
+  if (!r.ok) throw new Error(`Upstream ${r.status}: ${r.statusText}`);
   return r.json();
 }
 
@@ -40,75 +50,114 @@ export default async function handler(req, res) {
 
   try {
 
-    // ── Course overview/details ──
-    // Returns: title, description (HTML), thumbnail, pricing, packages, FAQs etc.
-    // Used for: Overview tab
+    // ══════════════════════════════════════════
+    // action=course
+    // Course overview — title, description (HTML),
+    // thumbnail, pricing, packages, FAQs etc.
+    // Body: { course_id, parent_id? }
+    // ══════════════════════════════════════════
     if (action === "course") {
-      const data = await post("/course/course-details", {
-        course_id: body.course_id,
-        parent_id: body.parent_id || "0"
+      const data = await ntPost("/course/course-details", {
+        course_id: String(body.course_id),
+        parent_id: String(body.parent_id || "0")
       });
       return res.status(200).json(data);
     }
 
-    // ── All content (folders + videos + live) ──
-    // Returns: type="folder" or type="file" items
-    // Used for: Content tab, folder navigation
+    // ══════════════════════════════════════════
+    // action=content
+    // Folders + Videos + Live inside a course/folder
+    // Body: { course_id, folder_id?, parent_course_id? }
+    // Notes:
+    //   - folder_id="0" → root level
+    //   - parent_course_id needed for package courses
+    //     e.g. course_id=107, parent_course_id=151
+    //   - limit=1000 so new content auto-appears
+    // ══════════════════════════════════════════
     if (action === "content") {
-      const data = await post("/course/all-content", {
-        course_id: body.course_id,
-        folder_id: body.folder_id || "0",
+      const data = await ntPost("/course/all-content", {
+        course_id: String(body.course_id),
+        folder_id: String(body.folder_id || "0"),
         is_free: "",
         keyword: "",
         limit: "1000",
         page: "1",
-        parent_course_id: body.parent_course_id || "0"
+        parent_course_id: String(body.parent_course_id || "0")
       });
       return res.status(200).json(data);
     }
 
-    // ── Video/content details ──
-    // Returns: hls_url, vdc_id, duration, thumbnail etc.
-    // Used for: Video player
+    // ══════════════════════════════════════════
+    // action=video
+    // Video details — hls_url, vdc_id, duration etc.
+    // Query params: content_id, course_id
+    // ══════════════════════════════════════════
     if (action === "video") {
       const { content_id, course_id } = req.query;
-      const data = await get(`/course/content-details?content_id=${content_id}&course_id=${course_id}`);
+      if (!content_id || !course_id) {
+        return res.status(400).json({ error: "content_id and course_id required" });
+      }
+      const data = await ntGet(
+        `/course/content-details?content_id=${content_id}&course_id=${course_id}`
+      );
       return res.status(200).json(data);
     }
 
-    // ── Live classes ──
-    // Returns: live sessions for a course
-    // Used for: Live section
+    // ══════════════════════════════════════════
+    // action=live
+    // Live classes for a course (root level only)
+    // Body: { course_id, parent_course_id? }
+    // Returns only items where is_live=1
+    // ══════════════════════════════════════════
     if (action === "live") {
-      const data = await post("/course/all-content", {
-        course_id: body.course_id,
+      const data = await ntPost("/course/all-content", {
+        course_id: String(body.course_id),
         folder_id: "0",
         is_free: "",
         keyword: "",
         limit: "100",
         page: "1",
-        parent_course_id: "0"
+        parent_course_id: String(body.parent_course_id || "0")
       });
-      // Filter only live items
       const items = data.data || [];
-      const lives = items.filter(i => i.data?.is_live === 1 || i.type === "live");
+      const lives = items.filter(i =>
+        i.data?.is_live === 1 ||
+        i.type === "live" ||
+        i.data?.content_type === 4  // live type
+      );
       return res.status(200).json({ ...data, data: lives });
     }
 
-    // ── Package course content ──
-    // Used for: Package courses (like id=107 bundled with 151)
-    if (action === "package") {
-      const data = await post("/course/course-details", {
-        course_id: body.course_id,
-        parent_id: body.parent_id
+    // ══════════════════════════════════════════
+    // action=upcoming
+    // Upcoming classes for a course
+    // Body: { course_id, parent_course_id? }
+    // Returns only upcoming items
+    // ══════════════════════════════════════════
+    if (action === "upcoming") {
+      const data = await ntPost("/course/all-content", {
+        course_id: String(body.course_id),
+        folder_id: "0",
+        is_free: "",
+        keyword: "",
+        limit: "100",
+        page: "1",
+        parent_course_id: String(body.parent_course_id || "0")
       });
-      return res.status(200).json(data);
+      const items = data.data || [];
+      const now = Math.floor(Date.now() / 1000);
+      const upcoming = items.filter(i =>
+        i.data?.is_upcoming === 1 ||
+        i.type === "upcoming" ||
+        (i.data?.start_time && i.data.start_time > now && i.data?.is_live !== 1)
+      );
+      return res.status(200).json({ ...data, data: upcoming });
     }
 
-    return res.status(400).json({ success: false, error: "Invalid action" });
+    return res.status(400).json({ success: false, error: "Invalid action. Use: course, content, video, live, upcoming" });
 
   } catch (err) {
     console.error("[PROXY ERROR]", err.message);
     return res.status(500).json({ success: false, error: err.message });
   }
-  }
+}
