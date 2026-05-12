@@ -70,7 +70,7 @@ module.exports = async function handler(req, res) {
     // ══════════════════════════════════════════
 
     // action=send-otp — Mobile pe OTP bhejo
-    if (action === "send-otp") {
+    if (action === "sendotp") {
       const { mobile } = body;
       if (!mobile) return res.status(400).json({ error: "mobile required" });
 
@@ -112,7 +112,7 @@ module.exports = async function handler(req, res) {
     }
 
     // action=verify-otp — OTP verify karke token lo
-    if (action === "verify-otp") {
+    if (action === "verifyotp") {
       const { mobile, otp } = body;
       if (!mobile || !otp) return res.status(400).json({ error: "mobile and otp required" });
 
