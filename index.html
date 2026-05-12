@@ -502,7 +502,7 @@ async function sendOTP() {
   btn.disabled = true; btn.textContent = "Sending...";
 
   try {
-    const data = await apiPost("send-otp", {mobile});
+    const data = await apiPost("sendotp", {mobile});
     btn.disabled = false; btn.textContent = "Send OTP";
     if (data.success || data.responseCode) {
       document.getElementById("otpSubText").textContent = `Code sent to +91 ${mobile}`;
@@ -565,7 +565,7 @@ async function verifyOTP() {
   document.getElementById("otpError").style.display = "none";
 
   try {
-    const data = await apiPost("verify-otp", {mobile: currentMobile, otp});
+    const data = await apiPost("verifyotp", {mobile: currentMobile, otp});
     btn.disabled = false; btn.textContent = "Verify & Continue";
 
     if (data.success && data.token) {
