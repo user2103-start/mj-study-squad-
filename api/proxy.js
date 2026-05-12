@@ -49,6 +49,14 @@ async function ntGet(endpoint, token, userId) {
 }
 
 module.exports = async function handler(req, res) {
+  // ADD THIS:
+  if (typeof req.body === 'string') {
+    try { req.body = JSON.parse(req.body); } catch(e) { req.body = {}; }
+  }
+  if (!req.body) req.body = {};
+  
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  // ... baaki code same
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "GET,POST,OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type, X-User-Token, X-User-Id");
