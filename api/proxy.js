@@ -5,7 +5,7 @@
 const NT = "https://course.nexttoppers.com";
 const APP_ID = "1772100600";
 const USER_ID = "3245033";
-const TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozMjQ1MDMzLCJhcHBfaWQiOiIxNzcyMTAwNjAwIiwiZGV2aWNlX2lkIjoiNzZjYjlmMGYtNzQ0Ni00ZTJlLThmMjUtOGJmOTJjMTlhMzIzIiwicGxhdGZvcm0iOiIzIiwidXNlcl90eXBlIjoxLCJpYXQiOjE3NzgyMDg4NzQsImV4cCI6MTc4MDgwMDg3NH0.PYW_poPgm1rEUhf6U7x6TJ_2t4eDQgRTxpCms3X0iL8";
+const TOKEN = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjozMjQ1MDMzLCJhcHBfaWQiOiIxNzcyMTAwNjAwIiwiZGV2aWNlX2lkIjoiYWUyZmE1MDYtODVjYS00MThkLWE0NDktZWM1MDY4ZGM2NjY1IiwicGxhdGZvcm0iOiIzIiwidXNlcl90eXBlIjoxLCJpYXQiOjE3Nzg0OTQ5NjcsImV4cCI6MTc4MTA4Njk2N30.40g-NIb1n2f8oA7PPIqTgD3Y1zDrsQCpCxBajwpMaJY";
 
 const HEADERS = {
   "accept": "application/json, text/plain, */*",
