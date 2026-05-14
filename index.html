@@ -7,8 +7,8 @@
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
 <style>
-:root {
-  --bg:#f7f5f0;--surface:#ffffff;--surface2:#f0ede8;
+:root{
+  --bg:#f7f5f0;--surface:#fff;--surface2:#f0ede8;
   --border:#e8e4dc;--border2:#d4cfc6;
   --tp:#1a1612;--ts:#6b6560;--tm:#9b948c;
   --accent:#d97706;--accent2:#b45309;--accent-bg:#fef3c7;
@@ -19,847 +19,793 @@
   --shadow-lg:0 4px 16px rgba(0,0,0,0.1),0 16px 48px rgba(0,0,0,0.1);
 }
 *{margin:0;padding:0;box-sizing:border-box;}
-html{scroll-behavior:smooth;}
 body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tp);min-height:100vh;-webkit-font-smoothing:antialiased;user-select:none;}
-
-.page{display:none;min-height:100vh;animation:fadeUp 0.4s ease both;}
+.page{display:none;min-height:100vh;animation:fadeUp 0.35s ease both;}
 .page.active{display:block;}
 #playerPage.active{display:flex;flex-direction:column;background:#000;}
-@keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
 
-/* ═══ LOGIN PAGE ═══ */
-.login-wrap{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;}
-.login-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:40px 32px;width:100%;max-width:400px;box-shadow:var(--shadow-lg);}
-.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:32px;justify-content:center;}
-.login-logo-icon{font-size:2rem;}
-.login-logo-text{font-family:'Instrument Serif',serif;font-size:1.6rem;color:var(--tp);}
-.login-title{font-family:'Instrument Serif',serif;font-size:1.5rem;color:var(--tp);margin-bottom:8px;text-align:center;}
-.login-sub{font-size:0.88rem;color:var(--ts);text-align:center;margin-bottom:28px;line-height:1.5;}
-.input-group{margin-bottom:16px;}
-.input-label{font-size:0.78rem;font-weight:600;color:var(--ts);margin-bottom:6px;display:block;letter-spacing:0.02em;}
-.input-wrap{position:relative;display:flex;align-items:center;}
-.input-prefix{position:absolute;left:14px;font-size:0.9rem;color:var(--ts);font-weight:500;pointer-events:none;}
-.text-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 14px;font-family:'DM Sans',sans-serif;font-size:0.95rem;color:var(--tp);outline:none;transition:all 0.2s;}
-.text-input.with-prefix{padding-left:48px;}
-.text-input:focus{border-color:var(--accent);background:var(--surface);}
-.text-input::placeholder{color:var(--tm);}
-.otp-inputs{display:flex;gap:10px;justify-content:center;margin:8px 0;}
-.otp-input{width:48px;height:52px;text-align:center;font-size:1.3rem;font-weight:600;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);outline:none;transition:all 0.2s;font-family:'DM Sans',sans-serif;color:var(--tp);}
-.otp-input:focus{border-color:var(--accent);background:var(--surface);}
-.btn-full{width:100%;background:var(--tp);color:#fff;border:none;padding:14px;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:0.95rem;font-weight:500;cursor:pointer;transition:all 0.2s;margin-top:8px;}
-.btn-full:hover{background:#2d2925;}
-.btn-full:disabled{opacity:0.5;cursor:not-allowed;}
-.btn-ghost-sm{background:transparent;border:none;color:var(--blue);font-family:'DM Sans',sans-serif;font-size:0.85rem;cursor:pointer;padding:8px 0;display:block;text-align:center;width:100%;margin-top:8px;}
-.login-error{font-size:0.82rem;color:var(--red);text-align:center;margin-top:8px;display:none;}
-.login-info{font-size:0.82rem;color:var(--green);text-align:center;margin-top:8px;display:none;}
-.timer-txt{font-size:0.8rem;color:var(--tm);text-align:center;margin-top:8px;}
+/* ═══ LOGIN ═══ */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:36px 28px;width:100%;max-width:380px;box-shadow:var(--shadow-lg);}
+.login-logo{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:28px;}
+.login-logo-text{font-family:'Instrument Serif',serif;font-size:1.5rem;}
+.login-title{font-family:'Instrument Serif',serif;font-size:1.4rem;text-align:center;margin-bottom:6px;}
+.login-sub{font-size:0.86rem;color:var(--ts);text-align:center;margin-bottom:24px;line-height:1.5;}
+.inp-group{margin-bottom:14px;}
+.inp-label{font-size:0.76rem;font-weight:600;color:var(--ts);margin-bottom:5px;display:block;}
+.inp-wrap{position:relative;}
+.inp-pre{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:0.9rem;color:var(--ts);pointer-events:none;}
+.inp{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 13px;font-family:'DM Sans',sans-serif;font-size:0.93rem;color:var(--tp);outline:none;transition:all 0.2s;}
+.inp.pl{padding-left:44px;}
+.inp:focus{border-color:var(--accent);background:var(--surface);}
+.inp::placeholder{color:var(--tm);}
+.otp-row{display:flex;gap:8px;justify-content:center;margin:8px 0;}
+.otp-inp{width:44px;height:50px;text-align:center;font-size:1.2rem;font-weight:600;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);outline:none;font-family:'DM Sans',sans-serif;color:var(--tp);transition:all 0.2s;}
+.otp-inp:focus{border-color:var(--accent);background:var(--surface);}
+.btn-primary{width:100%;background:var(--tp);color:#fff;border:none;padding:13px;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:0.93rem;font-weight:500;cursor:pointer;transition:all 0.2s;margin-top:6px;}
+.btn-primary:hover{background:#2d2925;}
+.btn-primary:disabled{opacity:0.5;cursor:not-allowed;}
+.btn-ghost{background:transparent;border:none;color:var(--blue);font-family:'DM Sans',sans-serif;font-size:0.83rem;cursor:pointer;padding:7px 0;display:block;text-align:center;width:100%;margin-top:6px;}
+.err-txt{font-size:0.8rem;color:var(--red);text-align:center;margin-top:6px;min-height:18px;}
+.ok-txt{font-size:0.8rem;color:var(--green);text-align:center;margin-top:6px;min-height:18px;}
+.timer-txt{font-size:0.78rem;color:var(--tm);text-align:center;margin-top:7px;}
 
 /* ═══ LANDING ═══ */
-.wrap{max-width:680px;margin:0 auto;padding:0 20px 60px;}
-
-/* Top bar */
-.topbar{display:flex;align-items:center;justify-content:space-between;padding:20px 0 0;}
-.topbar-logo{font-family:'Instrument Serif',serif;font-size:1.2rem;color:var(--tp);display:flex;align-items:center;gap:8px;}
-.user-chip{display:flex;align-items:center;gap:8px;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:6px 14px;cursor:pointer;transition:all 0.2s;}
+.wrap{max-width:680px;margin:0 auto;padding:0 18px 60px;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 0 0;}
+.topbar-logo{font-family:'Instrument Serif',serif;font-size:1.15rem;color:var(--tp);}
+.user-chip{display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:5px 13px;cursor:pointer;transition:all 0.2s;}
 .user-chip:hover{border-color:var(--border2);}
-.user-avatar{width:24px;height:24px;border-radius:50%;background:var(--accent-bg);display:flex;align-items:center;justify-content:center;font-size:0.75rem;font-weight:600;color:var(--accent2);}
-.user-name{font-size:0.8rem;font-weight:500;color:var(--tp);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.u-avatar{width:22px;height:22px;border-radius:50%;background:var(--accent-bg);display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:var(--accent2);}
+.u-name{font-size:0.78rem;font-weight:500;max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
-.hero-section{padding:48px 0 40px;text-align:center;}
-.hero-eyebrow{display:inline-flex;align-items:center;gap:8px;background:var(--accent-bg);border:1px solid #fcd34d;border-radius:100px;padding:6px 16px;font-size:0.78rem;font-weight:600;color:var(--accent2);letter-spacing:0.02em;margin-bottom:28px;}
-.hero-title{font-family:'Instrument Serif',serif;font-size:clamp(2.2rem,8vw,3.4rem);font-weight:400;line-height:1.15;color:var(--tp);margin-bottom:20px;letter-spacing:-0.02em;}
+.hero{padding:44px 0 36px;text-align:center;}
+.eyebrow{display:inline-flex;align-items:center;gap:7px;background:var(--accent-bg);border:1px solid #fcd34d;border-radius:100px;padding:5px 14px;font-size:0.76rem;font-weight:600;color:var(--accent2);margin-bottom:24px;}
+.hero-title{font-family:'Instrument Serif',serif;font-size:clamp(2rem,8vw,3.2rem);font-weight:400;line-height:1.15;margin-bottom:18px;letter-spacing:-0.02em;}
 .hero-title em{font-style:italic;color:var(--accent);}
-.hero-sub{font-size:1rem;color:var(--ts);line-height:1.65;max-width:480px;margin:0 auto 32px;font-weight:300;}
-.hero-cta{display:inline-flex;align-items:center;gap:8px;background:var(--tp);color:#fff;border:none;padding:13px 26px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:0.92rem;font-weight:500;cursor:pointer;transition:all 0.2s;}
-.hero-cta:hover{background:#2d2925;transform:translateY(-1px);box-shadow:var(--shadow-md);}
+.hero-sub{font-size:0.98rem;color:var(--ts);line-height:1.65;max-width:460px;margin:0 auto 28px;font-weight:300;}
+.hero-btn{display:inline-flex;align-items:center;gap:7px;background:var(--tp);color:#fff;border:none;padding:12px 24px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;cursor:pointer;transition:all 0.2s;}
+.hero-btn:hover{background:#2d2925;transform:translateY(-1px);}
 
-.stats-row{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin:40px 0;}
-.stat{flex:1;padding:20px 16px;text-align:center;border-right:1px solid var(--border);}
+.stats-row{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin:36px 0;}
+.stat{flex:1;padding:18px 12px;text-align:center;border-right:1px solid var(--border);}
 .stat:last-child{border-right:none;}
-.stat-num{font-family:'Instrument Serif',serif;font-size:1.8rem;color:var(--tp);display:block;line-height:1;margin-bottom:4px;}
-.stat-label{font-size:0.7rem;color:var(--tm);font-weight:500;text-transform:uppercase;letter-spacing:0.06em;}
+.stat-n{font-family:'Instrument Serif',serif;font-size:1.7rem;display:block;line-height:1;margin-bottom:3px;}
+.stat-l{font-size:0.68rem;color:var(--tm);font-weight:500;text-transform:uppercase;letter-spacing:0.06em;}
 
-.section-divider{display:flex;align-items:center;gap:16px;margin:36px 0 24px;}
-.section-divider::before,.section-divider::after{content:'';flex:1;height:1px;background:var(--border);}
-.section-divider span{font-size:0.76rem;color:var(--tm);font-weight:500;text-transform:uppercase;letter-spacing:0.1em;white-space:nowrap;}
+.divider{display:flex;align-items:center;gap:14px;margin:32px 0 20px;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.divider span{font-size:0.74rem;color:var(--tm);font-weight:500;text-transform:uppercase;letter-spacing:0.1em;white-space:nowrap;}
 
 /* BATCH CARDS */
-.batch-cards{display:flex;flex-direction:column;gap:16px;}
-.batch-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all 0.25s;display:block;width:100%;text-align:left;font-family:'DM Sans',sans-serif;color:var(--tp);box-shadow:var(--shadow);}
-.batch-card:hover{border-color:var(--border2);box-shadow:var(--shadow-md);transform:translateY(-2px);}
-.batch-card:active{transform:translateY(0);}
-.batch-img{width:100%;height:200px;object-fit:cover;display:block;background:var(--surface2);}
-.batch-img-ph{width:100%;height:200px;display:flex;align-items:center;justify-content:center;font-size:2.5rem;background:var(--surface2);color:var(--tm);}
-.batch-body{padding:20px 22px 22px;}
-.batch-tags{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;}
-.tag{display:inline-flex;align-items:center;font-size:0.7rem;font-weight:600;letter-spacing:0.04em;padding:3px 10px;border-radius:100px;text-transform:uppercase;}
-.tag-new{background:#dcfce7;color:#166534;border:1px solid #bbf7d0;}
-.tag-trending{background:#fef3c7;color:#92400e;border:1px solid #fde68a;}
+.batch-cards{display:flex;flex-direction:column;gap:14px;}
+.bcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all 0.25s;display:block;width:100%;text-align:left;font-family:'DM Sans',sans-serif;color:var(--tp);box-shadow:var(--shadow);}
+.bcard:hover{border-color:var(--border2);box-shadow:var(--shadow-md);transform:translateY(-2px);}
+.bcard:active{transform:translateY(0);}
+.bcard-img{width:100%;height:190px;object-fit:cover;display:block;background:var(--surface2);}
+.bcard-img-ph{width:100%;height:190px;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:600;color:var(--tm);background:var(--surface2);}
+.bcard-body{padding:18px 20px 20px;}
+.tags{display:flex;gap:7px;margin-bottom:10px;flex-wrap:wrap;}
+.tag{font-size:0.68rem;font-weight:600;letter-spacing:0.04em;padding:2px 9px;border-radius:100px;text-transform:uppercase;}
 .tag-jee{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;}
 .tag-neet{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;}
-.batch-title{font-family:'Instrument Serif',serif;font-size:1.35rem;font-weight:400;line-height:1.3;margin-bottom:6px;}
-.batch-subtitle{font-size:0.84rem;color:var(--ts);margin-bottom:16px;}
-.batch-footer{display:flex;align-items:center;justify-content:space-between;}
-.batch-price{display:flex;align-items:baseline;gap:8px;}
-.price-offer{font-size:1.15rem;font-weight:600;color:var(--tp);}
-.price-mrp{font-size:0.84rem;color:var(--tm);text-decoration:line-through;}
-.price-disc{font-size:0.74rem;font-weight:600;color:var(--green);}
-.btn-start{display:inline-flex;align-items:center;gap:6px;background:var(--tp);color:#fff;border:none;padding:10px 20px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:0.84rem;font-weight:500;cursor:pointer;transition:all 0.2s;flex-shrink:0;}
-.btn-start:hover{background:#2d2925;}
+.tag-new{background:#dcfce7;color:#166534;border:1px solid #bbf7d0;}
+.tag-trend{background:#fef3c7;color:#92400e;border:1px solid #fde68a;}
+.bcard-title{font-family:'Instrument Serif',serif;font-size:1.28rem;font-weight:400;line-height:1.3;margin-bottom:5px;}
+.bcard-sub{font-size:0.82rem;color:var(--ts);margin-bottom:14px;}
+.bcard-foot{display:flex;align-items:center;justify-content:space-between;}
+.price-row{display:flex;align-items:baseline;gap:7px;}
+.price-offer{font-size:1.1rem;font-weight:600;}
+.price-mrp{font-size:0.82rem;color:var(--tm);text-decoration:line-through;}
+.price-disc{font-size:0.72rem;font-weight:600;color:var(--green);}
+.btn-sm{display:inline-flex;align-items:center;gap:5px;background:var(--tp);color:#fff;border:none;padding:9px 18px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;cursor:pointer;flex-shrink:0;}
 
-.formula-strip{margin:48px 0 0;padding:22px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);display:flex;flex-direction:column;gap:14px;}
-.fi{display:flex;align-items:center;gap:14px;}
-.fi-icon{width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
-.fi-math{background:#eff6ff;}.fi-phy{background:#fdf4ff;}.fi-chem{background:#fefce8;}
-.fi-text{font-family:'Courier New',monospace;font-size:0.88rem;font-weight:600;color:var(--tp);}
-.fi-label{font-size:0.7rem;color:var(--tm);margin-top:1px;}
-.landing-footer{text-align:center;padding:36px 0 20px;font-size:0.78rem;color:var(--tm);border-top:1px solid var(--border);margin-top:48px;}
+.landing-footer{text-align:center;padding:32px 0 16px;font-size:0.76rem;color:var(--tm);border-top:1px solid var(--border);margin-top:44px;}
 
 /* ═══ COURSE PAGE ═══ */
-.course-wrap{max-width:680px;margin:0 auto;padding:0 20px 60px;}
-.back-row{padding:20px 0 0;display:flex;align-items:center;gap:10px;}
-.back-btn{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--border);color:var(--ts);padding:8px 16px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;cursor:pointer;transition:all 0.2s;}
+.cwrap{max-width:680px;margin:0 auto;padding:0 18px 60px;}
+.back-row{padding:18px 0 0;display:flex;align-items:center;gap:10px;}
+.back-btn{display:inline-flex;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--border);color:var(--ts);padding:7px 14px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:0.8rem;font-weight:500;cursor:pointer;transition:all 0.2s;}
 .back-btn:hover{border-color:var(--border2);color:var(--tp);}
-.bc-text{font-size:0.82rem;color:var(--tm);}
+.bc{font-size:0.8rem;color:var(--tm);}
 .bc-link{cursor:pointer;color:var(--blue);}
-.bc-sep{color:var(--border2);}
-.bc-cur{color:var(--tp);font-weight:500;}
 
-.course-hero-img{width:100%;height:220px;object-fit:cover;border-radius:var(--radius);display:block;margin:18px 0;background:var(--surface2);box-shadow:var(--shadow);}
-.course-hero-ph{width:100%;height:220px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;font-size:3rem;background:var(--surface2);margin:18px 0;color:var(--tm);}
-.course-tags{display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;}
-.course-title-el{font-family:'Instrument Serif',serif;font-size:1.7rem;font-weight:400;line-height:1.2;margin-bottom:6px;letter-spacing:-0.02em;}
-.course-meta{font-size:0.85rem;color:var(--ts);margin-bottom:18px;}
+.chero-img{width:100%;height:210px;object-fit:cover;border-radius:var(--radius);display:block;margin:16px 0;box-shadow:var(--shadow);}
+.chero-ph{width:100%;height:210px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;background:var(--surface2);margin:16px 0;font-size:0.9rem;color:var(--tm);}
+.ctitle{font-family:'Instrument Serif',serif;font-size:1.65rem;font-weight:400;line-height:1.2;margin-bottom:6px;}
+.cmeta{font-size:0.84rem;color:var(--ts);margin-bottom:16px;}
 
-.pkg-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:12px;margin-bottom:20px;box-shadow:var(--shadow);}
-.pkg-img{width:56px;height:56px;border-radius:var(--radius-sm);object-fit:cover;flex-shrink:0;}
-.pkg-label{font-size:0.66rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;}
-.pkg-title{font-size:0.88rem;font-weight:500;color:var(--tp);line-height:1.3;}
+.pkg-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px 15px;display:flex;align-items:center;gap:11px;margin-bottom:18px;box-shadow:var(--shadow);}
+.pkg-img{width:52px;height:52px;border-radius:var(--radius-sm);object-fit:cover;flex-shrink:0;}
+.pkg-lbl{font-size:0.64rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;}
+.pkg-title{font-size:0.86rem;font-weight:500;line-height:1.3;}
 
-.tabs-bar{display:flex;border-bottom:1px solid var(--border);margin-bottom:24px;}
-.tab-item{padding:12px 18px;font-size:0.84rem;font-weight:500;color:var(--tm);cursor:pointer;border:none;background:transparent;font-family:'DM Sans',sans-serif;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.2s;}
-.tab-item:hover{color:var(--ts);}
-.tab-item.active{color:var(--tp);border-bottom-color:var(--tp);}
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:22px;}
+.tab{padding:11px 16px;font-size:0.82rem;font-weight:500;color:var(--tm);cursor:pointer;border:none;background:transparent;font-family:'DM Sans',sans-serif;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.2s;}
+.tab:hover{color:var(--ts);}
+.tab.active{color:var(--tp);border-bottom-color:var(--tp);}
 
-.ov-desc{font-size:0.88rem;line-height:1.75;color:var(--ts);}
-.ov-desc img{max-width:100%;border-radius:var(--radius-sm);margin:8px 0;}
-.ov-desc h1,.ov-desc h2,.ov-desc h3{font-family:'Instrument Serif',serif;font-weight:400;color:var(--tp);margin:14px 0 6px;}
+.ov-desc{font-size:0.87rem;line-height:1.75;color:var(--ts);}
+.ov-desc img{max-width:100%;border-radius:var(--radius-sm);margin:7px 0;}
+.ov-desc h1,.ov-desc h2,.ov-desc h3{font-family:'Instrument Serif',serif;font-weight:400;color:var(--tp);margin:13px 0 5px;}
 .ov-desc strong{color:var(--tp);font-weight:600;}
 .ov-desc p{margin-bottom:8px;}
-.ov-desc ol,.ov-desc ul{padding-left:18px;margin-bottom:8px;}
+.ov-desc ol,.ov-desc ul{padding-left:17px;margin-bottom:8px;}
 .ov-desc li{margin-bottom:5px;}
 
-.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-.sec-title{font-size:0.7rem;font-weight:600;color:var(--tm);text-transform:uppercase;letter-spacing:0.1em;}
-.sec-count{font-size:0.7rem;color:var(--tm);background:var(--surface2);border:1px solid var(--border);padding:2px 8px;border-radius:100px;}
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;}
+.sec-title{font-size:0.68rem;font-weight:600;color:var(--tm);text-transform:uppercase;letter-spacing:0.1em;}
+.sec-cnt{font-size:0.68rem;color:var(--tm);background:var(--surface2);border:1px solid var(--border);padding:2px 7px;border-radius:100px;}
 
 /* LIVE */
-.live-card{background:#fff5f5;border:1px solid #fecaca;border-radius:var(--radius);padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;width:100%;text-align:left;font-family:'DM Sans',sans-serif;color:var(--tp);transition:all 0.2s;margin-bottom:8px;}
-.live-card:hover{box-shadow:var(--shadow);}
-.live-dot{width:9px;height:9px;border-radius:50%;background:var(--red);flex-shrink:0;animation:lp 1.4s ease-in-out infinite;box-shadow:0 0 0 0 rgba(220,38,38,0.4);}
+.live-card{background:#fff5f5;border:1px solid #fecaca;border-radius:var(--radius);padding:13px 15px;display:flex;align-items:center;gap:11px;cursor:pointer;width:100%;text-align:left;font-family:'DM Sans',sans-serif;color:var(--tp);transition:all 0.2s;margin-bottom:8px;}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0;animation:lp 1.4s ease-in-out infinite;}
 @keyframes lp{0%{box-shadow:0 0 0 0 rgba(220,38,38,0.4);}70%{box-shadow:0 0 0 7px rgba(220,38,38,0);}100%{box-shadow:0 0 0 0 rgba(220,38,38,0);}}
-.live-lbl{font-size:0.67rem;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:0.08em;}
-.live-name{font-size:0.88rem;font-weight:500;flex:1;}
-.join-btn{background:var(--red);color:white;border:none;padding:6px 14px;border-radius:100px;font-size:0.74rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;flex-shrink:0;}
+.live-lbl{font-size:0.65rem;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:0.08em;}
+.live-name{font-size:0.87rem;font-weight:500;flex:1;}
+.join-btn{background:var(--red);color:white;border:none;padding:6px 13px;border-radius:100px;font-size:0.72rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;flex-shrink:0;}
 
-/* FOLDERS */
-.folders-list{display:flex;flex-direction:column;gap:10px;margin-bottom:24px;}
+/* UPCOMING */
+.up-card{background:#fffbeb;border:1px solid #fde68a;border-radius:var(--radius);padding:13px 15px;display:flex;align-items:center;gap:11px;margin-bottom:8px;}
+.up-icon{width:36px;height:36px;border-radius:50%;background:var(--accent-bg);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.up-info{flex:1;}
+.up-name{font-size:0.87rem;font-weight:500;margin-bottom:2px;}
+.up-meta{font-size:0.72rem;color:var(--ts);}
+
+/* FOLDER */
+.folders-list{display:flex;flex-direction:column;gap:9px;margin-bottom:22px;}
 .folder-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;cursor:pointer;overflow:hidden;transition:all 0.22s;width:100%;text-align:left;font-family:'DM Sans',sans-serif;color:var(--tp);box-shadow:var(--shadow);}
 .folder-card:hover{border-color:var(--border2);box-shadow:var(--shadow-md);transform:translateY(-1px);}
-.folder-card:active{transform:translateY(0);}
-.folder-img{width:76px;height:76px;object-fit:cover;flex-shrink:0;display:block;}
-.folder-img-ph{width:76px;height:76px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--surface2);color:var(--tm);font-size:1.5rem;}
-.folder-content{flex:1;padding:13px 15px;}
-.folder-name{font-size:0.9rem;font-weight:500;margin-bottom:3px;line-height:1.3;}
-.folder-meta{font-size:0.74rem;color:var(--tm);}
-.folder-arr{padding:0 16px;color:var(--tm);font-size:0.9rem;flex-shrink:0;}
+.f-img{width:74px;height:74px;object-fit:cover;flex-shrink:0;display:block;}
+.f-ph{width:74px;height:74px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--surface2);color:var(--tm);font-size:0.8rem;}
+.f-body{flex:1;padding:12px 14px;}
+.f-name{font-size:0.88rem;font-weight:500;margin-bottom:3px;line-height:1.3;}
+.f-meta{font-size:0.72rem;color:var(--tm);}
+.f-arr{padding:0 14px;color:var(--tm);font-size:0.88rem;}
 
 /* VIDEOS */
-.videos-list{display:flex;flex-direction:column;gap:8px;}
-.video-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;gap:13px;padding:13px 15px;cursor:pointer;width:100%;text-align:left;font-family:'DM Sans',sans-serif;color:var(--tp);transition:all 0.22s;box-shadow:var(--shadow);}
-.video-card:hover{border-color:var(--border2);box-shadow:var(--shadow-md);transform:translateY(-1px);}
-.video-card:active{transform:translateY(0);}
-.video-thumb{width:76px;height:48px;border-radius:var(--radius-sm);object-fit:cover;flex-shrink:0;display:block;background:var(--surface2);}
-.play-circle{width:42px;height:42px;border-radius:50%;flex-shrink:0;background:var(--tp);display:flex;align-items:center;justify-content:center;color:white;font-size:0.88rem;}
-.video-content{flex:1;min-width:0;}
-.video-name{font-size:0.87rem;font-weight:500;margin-bottom:3px;line-height:1.3;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.video-meta{font-size:0.73rem;color:var(--tm);}
-.hd-badge{font-size:0.64rem;font-weight:700;color:var(--blue);background:#eff6ff;border:1px solid #bfdbfe;padding:2px 7px;border-radius:4px;flex-shrink:0;text-transform:uppercase;}
+.videos-list{display:flex;flex-direction:column;gap:7px;}
+.v-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;width:100%;text-align:left;font-family:'DM Sans',sans-serif;color:var(--tp);transition:all 0.22s;box-shadow:var(--shadow);}
+.v-card:hover{border-color:var(--border2);box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.v-thumb{width:74px;height:46px;border-radius:var(--radius-sm);object-fit:cover;flex-shrink:0;background:var(--surface2);}
+.v-play{width:40px;height:40px;border-radius:50%;flex-shrink:0;background:var(--tp);display:flex;align-items:center;justify-content:center;color:white;font-size:0.85rem;}
+.v-body{flex:1;min-width:0;}
+.v-name{font-size:0.85rem;font-weight:500;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.3;}
+.v-meta{font-size:0.72rem;color:var(--tm);}
+.hd-badge{font-size:0.62rem;font-weight:700;color:var(--blue);background:#eff6ff;border:1px solid #bfdbfe;padding:2px 6px;border-radius:4px;flex-shrink:0;}
 
 /* STATE */
-.state-box{padding:56px 20px;text-align:center;}
-.state-spin{width:30px;height:30px;border-radius:50%;border:2px solid var(--border2);border-top-color:var(--tp);animation:spin 0.8s linear infinite;margin:0 auto 14px;}
+.state{padding:52px 18px;text-align:center;}
+.spinner{width:28px;height:28px;border-radius:50%;border:2px solid var(--border2);border-top-color:var(--tp);animation:spin 0.8s linear infinite;margin:0 auto 12px;}
 @keyframes spin{to{transform:rotate(360deg)}}
-.state-box p{font-size:0.86rem;color:var(--tm);}
-.state-box h3{font-family:'Instrument Serif',serif;font-size:1.2rem;margin-bottom:6px;}
-.retry-btn{margin-top:14px;background:var(--tp);color:white;border:none;padding:10px 22px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:0.84rem;font-weight:500;cursor:pointer;}
+.state p{font-size:0.85rem;color:var(--tm);}
+.state h3{font-family:'Instrument Serif',serif;font-size:1.15rem;margin-bottom:5px;}
+.retry{margin-top:12px;background:var(--tp);color:white;border:none;padding:9px 20px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;cursor:pointer;}
 
 /* ═══ PLAYER ═══ */
-.p-nav{display:flex;align-items:center;gap:12px;padding:11px 15px;background:rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.08);flex-shrink:0;}
-.p-back{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.1);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:white;font-size:0.88rem;transition:all 0.2s;flex-shrink:0;}
+.p-nav{display:flex;align-items:center;gap:11px;padding:10px 14px;background:rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.08);flex-shrink:0;}
+.p-back{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.1);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:white;font-size:0.85rem;transition:all 0.2s;flex-shrink:0;}
 .p-back:hover{background:rgba(255,255,255,0.18);}
-.p-title{font-size:0.86rem;font-weight:500;color:rgba(255,255,255,0.9);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.p-title{font-size:0.85rem;font-weight:500;color:rgba(255,255,255,0.9);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .p-main{flex:1;display:flex;align-items:center;justify-content:center;background:#000;position:relative;min-height:240px;}
-#pvideo{width:100%;max-height:calc(100vh - 100px);display:block;}
-.p-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#0a0a0a;z-index:10;padding:24px;text-align:center;}
-.p-spin{width:38px;height:38px;border-radius:50%;border:2px solid rgba(255,255,255,0.15);border-top-color:rgba(255,255,255,0.8);animation:spin 0.8s linear infinite;margin-bottom:12px;}
-.p-txt{font-size:0.84rem;color:rgba(255,255,255,0.5);}
-.p-h{font-size:0.98rem;font-weight:500;color:white;margin:10px 0 6px;}
-.p-sub{font-size:0.8rem;color:rgba(255,255,255,0.4);margin-bottom:14px;}
-.q-strip{display:flex;align-items:center;gap:8px;padding:9px 15px;background:#111;border-top:1px solid #222;flex-shrink:0;flex-wrap:wrap;}
-.q-strip span{font-size:0.7rem;color:rgba(255,255,255,0.4);font-weight:500;}
-.q-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);padding:4px 12px;border-radius:100px;font-family:'DM Sans',sans-serif;font-weight:500;font-size:0.74rem;cursor:pointer;transition:all 0.2s;}
+#pvideo{width:100%;max-height:calc(100vh - 96px);display:block;}
+.p-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#0a0a0a;z-index:10;padding:22px;text-align:center;}
+.p-spin{width:36px;height:36px;border-radius:50%;border:2px solid rgba(255,255,255,0.15);border-top-color:rgba(255,255,255,0.8);animation:spin 0.8s linear infinite;margin-bottom:11px;}
+.p-txt{font-size:0.82rem;color:rgba(255,255,255,0.5);}
+.p-h{font-size:0.95rem;font-weight:500;color:white;margin:9px 0 5px;}
+.p-sub{font-size:0.79rem;color:rgba(255,255,255,0.4);margin-bottom:13px;}
+.q-strip{display:flex;align-items:center;gap:7px;padding:8px 14px;background:#111;border-top:1px solid #222;flex-shrink:0;flex-wrap:wrap;}
+.q-strip span{font-size:0.7rem;color:rgba(255,255,255,0.4);}
+.q-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);padding:3px 11px;border-radius:100px;font-family:'DM Sans',sans-serif;font-weight:500;font-size:0.72rem;cursor:pointer;transition:all 0.2s;}
 .q-btn:hover,.q-btn.active{background:white;border-color:white;color:#000;}
 
-/* Security overlay */
-#secOverlay{display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:16px;}
+/* Security */
+#secOverlay{display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:14px;}
 #secOverlay.show{display:flex;}
 </style>
 </head>
 <body>
 
-<!-- SECURITY OVERLAY -->
 <div id="secOverlay">
-  <div style="font-size:2rem;">🔒</div>
-  <div style="font-family:'Instrument Serif',serif;font-size:1.4rem;color:var(--tp);">Access Restricted</div>
-  <div style="font-size:0.85rem;color:var(--ts);">Please close developer tools to continue.</div>
+  <div style="font-size:1.8rem;">🔒</div>
+  <div style="font-family:'Instrument Serif',serif;font-size:1.3rem;">Access Restricted</div>
+  <div style="font-size:0.83rem;color:var(--ts);">Please close developer tools.</div>
 </div>
 
-<!-- ═══ LOGIN PAGE ═══ -->
+<!-- LOGIN -->
 <div class="page active" id="loginPage">
   <div class="login-wrap">
     <div class="login-card">
       <div class="login-logo">
-        <div class="login-logo-icon">🎯</div>
+        <div style="font-size:1.8rem;">🎯</div>
         <div class="login-logo-text">Study Squad</div>
       </div>
 
-      <!-- Step 1: Mobile -->
+      <!-- Mobile step -->
       <div id="stepMobile">
         <div class="login-title">Welcome back</div>
         <div class="login-sub">Enter your mobile number to continue</div>
-        <div class="input-group">
-          <label class="input-label">Mobile Number</label>
-          <div class="input-wrap">
-            <span class="input-prefix">+91</span>
-            <input class="text-input with-prefix" type="tel" id="mobileInput" placeholder="10-digit number" maxlength="10" inputmode="numeric"/>
+        <div class="inp-group">
+          <label class="inp-label">Mobile Number</label>
+          <div class="inp-wrap">
+            <span class="inp-pre">+91</span>
+            <input class="inp pl" type="tel" id="mobileInp" placeholder="10-digit number" maxlength="10" inputmode="numeric"/>
           </div>
         </div>
-        <div class="login-error" id="mobileError"></div>
-        <button class="btn-full" id="sendOtpBtn" onclick="sendOTP()">Send OTP</button>
+        <div class="err-txt" id="mobileErr"></div>
+        <button class="btn-primary" id="sendBtn" onclick="sendOTP()">Send OTP</button>
       </div>
 
-      <!-- Step 2: OTP -->
+      <!-- Name step (new user) -->
+      <div id="stepName" style="display:none;">
+        <div class="login-title">What's your name?</div>
+        <div class="login-sub">Enter your name to continue</div>
+        <div class="inp-group">
+          <label class="inp-label">Full Name</label>
+          <input class="inp" type="text" id="nameInp" placeholder="Your name"/>
+        </div>
+        <div class="err-txt" id="nameErr"></div>
+        <button class="btn-primary" onclick="proceedToOTP()">Continue →</button>
+        <button class="btn-ghost" onclick="showStep('mobile')">← Change Number</button>
+      </div>
+
+      <!-- OTP step -->
       <div id="stepOTP" style="display:none;">
         <div class="login-title">Enter OTP</div>
-        <div class="login-sub" id="otpSubText">We sent a code to your number</div>
-        <div class="input-group">
-          <label class="input-label" style="text-align:center;display:block;">Enter 6-digit OTP</label>
-          <div class="otp-inputs">
-            <input class="otp-input" type="tel" maxlength="1" inputmode="numeric" id="o1"/>
-            <input class="otp-input" type="tel" maxlength="1" inputmode="numeric" id="o2"/>
-            <input class="otp-input" type="tel" maxlength="1" inputmode="numeric" id="o3"/>
-            <input class="otp-input" type="tel" maxlength="1" inputmode="numeric" id="o4"/>
-            <input class="otp-input" type="tel" maxlength="1" inputmode="numeric" id="o5"/>
-            <input class="otp-input" type="tel" maxlength="1" inputmode="numeric" id="o6"/>
+        <div class="login-sub" id="otpSub">Code sent to your number</div>
+        <div class="inp-group">
+          <label class="inp-label" style="text-align:center;display:block;">6-digit OTP</label>
+          <div class="otp-row">
+            <input class="otp-inp" type="tel" maxlength="1" inputmode="numeric" id="o1"/>
+            <input class="otp-inp" type="tel" maxlength="1" inputmode="numeric" id="o2"/>
+            <input class="otp-inp" type="tel" maxlength="1" inputmode="numeric" id="o3"/>
+            <input class="otp-inp" type="tel" maxlength="1" inputmode="numeric" id="o4"/>
+            <input class="otp-inp" type="tel" maxlength="1" inputmode="numeric" id="o5"/>
+            <input class="otp-inp" type="tel" maxlength="1" inputmode="numeric" id="o6"/>
           </div>
         </div>
-        <div class="login-error" id="otpError"></div>
-        <div class="login-info" id="otpInfo"></div>
-        <button class="btn-full" id="verifyOtpBtn" onclick="verifyOTP()">Verify & Continue</button>
-        <div class="timer-txt" id="timerTxt">Resend in <span id="timerCount">30</span>s</div>
-        <button class="btn-ghost-sm" id="resendBtn" style="display:none;" onclick="sendOTP()">Resend OTP</button>
-        <button class="btn-ghost-sm" onclick="showStep('mobile')">← Change Number</button>
+        <div class="err-txt" id="otpErr"></div>
+        <div class="ok-txt" id="otpOk"></div>
+        <button class="btn-primary" id="verifyBtn" onclick="verifyOTP()">Verify & Continue</button>
+        <div class="timer-txt" id="timerTxt">Resend in <span id="timerN">30</span>s</div>
+        <button class="btn-ghost" id="resendBtn" style="display:none;" onclick="sendOTP()">Resend OTP</button>
+        <button class="btn-ghost" onclick="showStep('mobile')">← Change Number</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ═══ LANDING PAGE ═══ -->
+<!-- LANDING -->
 <div class="page" id="landingPage">
   <div class="wrap">
     <div class="topbar">
       <div class="topbar-logo">🎯 Study Squad</div>
       <div class="user-chip" onclick="showProfile()">
-        <div class="user-avatar" id="userAvatar">?</div>
-        <div class="user-name" id="userName">Profile</div>
+        <div class="u-avatar" id="uAvatar">?</div>
+        <div class="u-name" id="uName">Profile</div>
       </div>
     </div>
-
-    <div class="hero-section">
-      <div class="hero-eyebrow">⚡ JEE & NEET 2026–28</div>
+    <div class="hero">
+      <div class="eyebrow">⚡ JEE & NEET 2026–28</div>
       <h1 class="hero-title">Master <em>JEE</em> &<br/><em>NEET</em> with<br/>Study Squad</h1>
-      <p class="hero-sub">India's most comprehensive learning platform. Premium video lectures, study materials, and live classes — completely free.</p>
-      <button class="hero-cta" onclick="document.querySelector('.batch-cards').scrollIntoView({behavior:'smooth'})">Explore Batches ↓</button>
+      <p class="hero-sub">India's most comprehensive learning platform. Premium video lectures, live classes — completely free.</p>
+      <button class="hero-btn" onclick="document.querySelector('.batch-cards').scrollIntoView({behavior:'smooth'})">Explore Batches ↓</button>
     </div>
-
     <div class="stats-row">
-      <div class="stat"><span class="stat-num">50k+</span><span class="stat-label">Students</span></div>
-      <div class="stat"><span class="stat-num">1000+</span><span class="stat-label">Lectures</span></div>
-      <div class="stat"><span class="stat-num">24/7</span><span class="stat-label">Access</span></div>
+      <div class="stat"><span class="stat-n">50k+</span><span class="stat-l">Students</span></div>
+      <div class="stat"><span class="stat-n">1000+</span><span class="stat-l">Lectures</span></div>
+      <div class="stat"><span class="stat-n">24/7</span><span class="stat-l">Access</span></div>
     </div>
-
-    <div class="section-divider"><span>Choose Your Batch</span></div>
-
+    <div class="divider"><span>Choose Your Batch</span></div>
     <div class="batch-cards">
-      <button class="batch-card" onclick="openCourse({id:'151',name:'Drona JEE',type:'jee'})">
-        <div class="batch-img-ph" id="thumb151">Loading...</div>
-        <div class="batch-body">
-          <div class="batch-tags" id="tags151"><span class="tag tag-jee">JEE 2028</span></div>
-          <div class="batch-title" id="btitle151">Drona JEE — Class 11th</div>
-          <div class="batch-subtitle">Physics, Chemistry & Mathematics</div>
-          <div class="batch-footer">
-            <div class="batch-price" id="bprice151"><span class="price-offer">₹4,999</span></div>
-            <span class="btn-start">Start Learning →</span>
+      <button class="bcard" onclick="openCourse('151','jee')">
+        <div class="bcard-img-ph" id="thumb151">Loading JEE batch...</div>
+        <div class="bcard-body">
+          <div class="tags" id="tags151"><span class="tag tag-jee">JEE 2028</span></div>
+          <div class="bcard-title" id="btitle151">Drona JEE — Class 11th</div>
+          <div class="bcard-sub">Physics, Chemistry & Mathematics</div>
+          <div class="bcard-foot">
+            <div class="price-row" id="bprice151"><span class="price-offer">₹4,999</span></div>
+            <span class="btn-sm">Start →</span>
           </div>
         </div>
       </button>
-      <button class="batch-card" onclick="openCourse({id:'152',name:'Drona NEET',type:'neet'})">
-        <div class="batch-img-ph" id="thumb152">Loading...</div>
-        <div class="batch-body">
-          <div class="batch-tags" id="tags152"><span class="tag tag-neet">NEET 2028</span></div>
-          <div class="batch-title" id="btitle152">Drona NEET — Class 11th</div>
-          <div class="batch-subtitle">Physics, Chemistry & Biology</div>
-          <div class="batch-footer">
-            <div class="batch-price" id="bprice152"><span class="price-offer">₹4,999</span></div>
-            <span class="btn-start">Start Learning →</span>
+      <button class="bcard" onclick="openCourse('152','neet')">
+        <div class="bcard-img-ph" id="thumb152">Loading NEET batch...</div>
+        <div class="bcard-body">
+          <div class="tags" id="tags152"><span class="tag tag-neet">NEET 2028</span></div>
+          <div class="bcard-title" id="btitle152">Drona NEET — Class 11th</div>
+          <div class="bcard-sub">Physics, Chemistry & Biology</div>
+          <div class="bcard-foot">
+            <div class="price-row" id="bprice152"><span class="price-offer">₹4,999</span></div>
+            <span class="btn-sm">Start →</span>
           </div>
         </div>
       </button>
     </div>
-
-    <div class="formula-strip">
-      <div class="fi"><div class="fi-icon fi-math">∫</div><div><div class="fi-text">∫₀^∞ e^{-x²} dx = √π/2</div><div class="fi-label">Gaussian Integral — Mathematics</div></div></div>
-      <div class="fi"><div class="fi-icon fi-phy">⚡</div><div><div class="fi-text">E = mc² | F = dp/dt</div><div class="fi-label">Mass-Energy Equivalence — Physics</div></div></div>
-      <div class="fi"><div class="fi-icon fi-chem">⚗</div><div><div class="fi-text">K_eq = [C]ᶜ[D]ᵈ / [A]ᵃ[B]ᵇ</div><div class="fi-label">Chemical Equilibrium — Chemistry</div></div></div>
-    </div>
-    <div class="landing-footer">Study Squad · All content powered by Mission JEET</div>
+    <div class="landing-footer">Study Squad · Powered by Mission JEET</div>
   </div>
 </div>
 
-<!-- ═══ COURSE PAGE ═══ -->
+<!-- COURSE PAGE -->
 <div class="page" id="coursePage">
-  <div class="course-wrap">
+  <div class="cwrap">
     <div class="back-row">
-      <button class="back-btn" id="cBackBtn">← Back</button>
-      <span class="bc-text">
-        <span class="bc-link" onclick="showPage('landingPage')">Home</span>
-        <span class="bc-sep"> › </span>
-        <span class="bc-cur" id="bcCur">Course</span>
-      </span>
+      <button class="back-btn" id="cBack">← Back</button>
+      <span class="bc"><span class="bc-link" onclick="showPage('landingPage')">Home</span> › <span id="bcCur"></span></span>
     </div>
-    <div id="cHero"><div class="course-hero-ph">Loading...</div></div>
-    <div class="course-tags" id="cTags"></div>
-    <div class="course-title-el" id="cTitle">Loading...</div>
-    <div class="course-meta" id="cMeta"></div>
+    <div id="cHero"><div class="chero-ph">Loading...</div></div>
+    <div class="tags" id="cTags" style="margin:12px 0 8px;"></div>
+    <div class="ctitle" id="cTitle"></div>
+    <div class="cmeta" id="cMeta"></div>
     <div id="pkgCard"></div>
-    <div class="tabs-bar">
-      <button class="tab-item active" id="tabOv" onclick="switchTab('ov')">Overview</button>
-      <button class="tab-item" id="tabCt" onclick="switchTab('ct')">Content</button>
+    <div class="tabs">
+      <button class="tab active" id="tabOv" onclick="switchTab('ov')">Overview</button>
+      <button class="tab" id="tabCt" onclick="switchTab('ct')">Content</button>
+      <button class="tab" id="tabLive" onclick="switchTab('live')">Live</button>
     </div>
+
+    <!-- OVERVIEW -->
     <div id="ovPane">
-      <div class="state-box" id="ovLoad"><div class="state-spin"></div><p>Loading overview...</p></div>
+      <div class="state" id="ovLoad"><div class="spinner"></div><p>Loading...</p></div>
       <div id="ovBody" style="display:none;"></div>
     </div>
+
+    <!-- CONTENT -->
     <div id="ctPane" style="display:none;">
-      <div id="folderBc" style="font-size:0.82rem;color:var(--tm);margin-bottom:18px;display:none;flex-wrap:wrap;gap:4px;align-items:center;"></div>
-      <div id="liveSection" style="display:none;">
-        <div class="sec-head"><div class="sec-title">🔴 Live Now</div></div>
-        <div id="liveCards" style="margin-bottom:20px;"></div>
-      </div>
-      <div class="state-box" id="ctLoad"><div class="state-spin"></div><p>Fetching content...</p></div>
-      <div class="state-box" id="ctErr" style="display:none;"><h3>Couldn't load</h3><p id="ctErrMsg"></p><button class="retry-btn" onclick="loadContent()">Try again</button></div>
+      <div id="fBc" style="font-size:0.8rem;color:var(--tm);margin-bottom:16px;display:none;"></div>
+      <div class="state" id="ctLoad"><div class="spinner"></div><p>Fetching content...</p></div>
+      <div class="state" id="ctErr" style="display:none;"><h3>Error</h3><p id="ctErrMsg"></p><button class="retry" onclick="loadContent()">Retry</button></div>
       <div id="ctData" style="display:none;">
         <div id="foldersSection" style="display:none;">
-          <div class="sec-head"><div class="sec-title">Folders</div><div class="sec-count" id="fCount"></div></div>
+          <div class="sec-head"><div class="sec-title">Folders</div><div class="sec-cnt" id="fCnt"></div></div>
           <div class="folders-list" id="foldersList"></div>
         </div>
         <div id="videosSection" style="display:none;">
-          <div class="sec-head" style="margin-top:20px;"><div class="sec-title">Videos</div><div class="sec-count" id="vCount"></div></div>
+          <div class="sec-head" style="margin-top:20px;"><div class="sec-title">Videos</div><div class="sec-cnt" id="vCnt"></div></div>
           <div class="videos-list" id="videosList"></div>
         </div>
       </div>
     </div>
+
+    <!-- LIVE -->
+    <div id="livePane" style="display:none;">
+      <div class="state" id="liveLoad"><div class="spinner"></div><p>Loading live classes...</p></div>
+      <div id="liveData" style="display:none;">
+        <!-- Live Now -->
+        <div id="liveNowSection" style="display:none;">
+          <div class="sec-head" style="margin-bottom:12px;"><div class="sec-title">🔴 Live Now</div></div>
+          <div id="liveNowCards" style="margin-bottom:20px;"></div>
+        </div>
+        <!-- Upcoming -->
+        <div id="upcomingSection" style="display:none;">
+          <div class="sec-head" style="margin-bottom:12px;"><div class="sec-title">📅 Upcoming</div></div>
+          <div id="upcomingCards" style="margin-bottom:20px;"></div>
+        </div>
+        <!-- No classes -->
+        <div id="noLive" style="display:none;">
+          <div class="state"><div style="font-size:2rem;margin-bottom:10px;">📡</div><h3>No Live Classes</h3><p>Check back at 4–8 PM for live sessions!</p></div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- ═══ PLAYER ═══ -->
+<!-- PLAYER -->
 <div class="page" id="playerPage">
   <div class="p-nav">
     <button class="p-back" id="pBack">←</button>
     <div class="p-title" id="pTitle">Video</div>
   </div>
   <div class="p-main">
-    <div class="p-overlay" id="pLoad"><div class="p-spin"></div><div class="p-txt" id="pLoadTxt">Loading...</div></div>
-    <div class="p-overlay" id="pErr" style="display:none;"><div style="font-size:2.5rem;margin-bottom:10px;">⚠️</div><div class="p-h">Couldn't load video</div><div class="p-sub" id="pErrMsg"></div><button class="retry-btn" onclick="goBackPlayer()">Go back</button></div>
+    <div class="p-overlay" id="pLoad"><div class="p-spin"></div><div class="p-txt" id="pTxt">Loading...</div></div>
+    <div class="p-overlay" id="pErr" style="display:none;"><div style="font-size:2.2rem;margin-bottom:10px;">⚠️</div><div class="p-h">Couldn't load video</div><div class="p-sub" id="pErrMsg"></div><button class="retry" onclick="goBackPlayer()">← Back</button></div>
     <video id="pvideo" playsinline controls></video>
   </div>
-  <div class="q-strip" id="qStrip" style="display:none;"><span>Quality:</span><div id="qBtns" style="display:flex;gap:6px;flex-wrap:wrap;"></div></div>
+  <div class="q-strip" id="qStrip" style="display:none;"><span>Quality:</span><div id="qBtns" style="display:flex;gap:5px;flex-wrap:wrap;"></div></div>
 </div>
 
 <script>
-// ══════════════════════════════
-// SECURITY
-// ══════════════════════════════
+// ══ SECURITY ══
 document.addEventListener('contextmenu', e => e.preventDefault());
 document.addEventListener('keydown', e => {
-  if (e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['I','J','C'].includes(e.key))||(e.ctrlKey&&['U','S'].includes(e.key))) {
-    e.preventDefault(); return false;
-  }
+  if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['I','J','C'].includes(e.key))||(e.ctrlKey&&['U','S'].includes(e.key))){e.preventDefault();return false;}
 });
 setInterval(()=>{
   const t=160;
-  if(window.outerWidth-window.innerWidth>t||window.outerHeight-window.innerHeight>t){
-    document.getElementById('secOverlay').classList.add('show');
-  } else {
-    document.getElementById('secOverlay').classList.remove('show');
-  }
-},500);
+  const open=window.outerWidth-window.innerWidth>t||window.outerHeight-window.innerHeight>t;
+  document.getElementById('secOverlay').classList.toggle('show',open);
+},600);
 
-// ══════════════════════════════
-// CONFIG
-// ══════════════════════════════
-const PROXY = "/api/proxy";
-const STORAGE_KEY = "ss_auth";
+// ══ CONFIG ══
+const PROXY="/api/proxy";
+const KEY="ss_auth";
 
-// ══════════════════════════════
-// AUTH STATE
-// ══════════════════════════════
-let AUTH_STATE = {token: null, userId: null, mobile: null, name: null};
+// ══ AUTH STATE ══
+let A={token:null,user:null};
+function saveAuth(token,user){A={token,user};try{localStorage.setItem(KEY,JSON.stringify(A));}catch(e){}}
+function loadAuth(){try{const d=localStorage.getItem(KEY);if(d)A=JSON.parse(d);}catch(e){}return !!(A.token&&A.user);}
+function getH(){const h={"Content-Type":"application/json"};if(A.token)h["X-User-Token"]=A.token;return h;}
 
-function saveAuth(token, userId, mobile, name) {
-  AUTH_STATE = {token, userId, mobile, name};
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(AUTH_STATE));
-  } catch(e) {}
+// ══ API ══
+async function api(action,params={}){
+  const q=new URLSearchParams({action,...params});
+  const r=await fetch(`${PROXY}?${q}`,{headers:getH()});
+  return r.json();
 }
-
-function loadAuth() {
-  try {
-    const d = localStorage.getItem(STORAGE_KEY);
-    if (d) AUTH_STATE = JSON.parse(d);
-  } catch(e) {}
-  return AUTH_STATE.token && AUTH_STATE.userId;
-}
-
-function getAPIHeaders() {
-  const h = {"Content-Type": "application/json"};
-  if (AUTH_STATE.token) {
-    h["X-User-Token"] = AUTH_STATE.token;
-    h["X-User-Id"] = AUTH_STATE.userId;
-  }
-  return h;
-}
-
-// ══════════════════════════════
-// API
-// ══════════════════════════════
-async function apiPost(action, body) {
-  const r = await fetch(`${PROXY}?action=${action}`, {
-    method:"POST", headers: getAPIHeaders(), body: JSON.stringify(body)
-  });
+async function apiPost(action,body={}){
+  const r=await fetch(`${PROXY}?action=${action}`,{method:"POST",headers:getH(),body:JSON.stringify(body)});
   return r.json();
 }
 
-async function apiGet(action, params) {
-  const q = new URLSearchParams({action, ...params});
-  const r = await fetch(`${PROXY}?${q}`, {headers: getAPIHeaders()});
-  return r.json();
-}
-
-// ══════════════════════════════
-// PAGES
-// ══════════════════════════════
-function showPage(id) {
-  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+// ══ PAGES ══
+function showPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
   document.getElementById(id).classList.add("active");
   window.scrollTo(0,0);
 }
 
-// ══════════════════════════════
-// LOGIN SYSTEM
-// ══════════════════════════════
-let otpTimer = null;
-let currentMobile = "";
+// ══ LOGIN ══
+let otpTimer=null,curMobile="",curName="",isNewUser=false;
 
-function showStep(step) {
-  document.getElementById("stepMobile").style.display = step==="mobile" ? "block" : "none";
-  document.getElementById("stepOTP").style.display = step==="otp" ? "block" : "none";
-  document.getElementById("mobileError").style.display = "none";
-  document.getElementById("otpError").style.display = "none";
-  document.getElementById("otpInfo").style.display = "none";
+function showStep(s){
+  ["stepMobile","stepName","stepOTP"].forEach(id=>{document.getElementById(id).style.display="none";});
+  document.getElementById("step"+s.charAt(0).toUpperCase()+s.slice(1)).style.display="block";
+  document.getElementById("mobileErr").textContent="";
+  document.getElementById("otpErr").textContent="";
+  document.getElementById("otpOk").textContent="";
 }
 
-async function sendOTP() {
-  const mobile = document.getElementById("mobileInput").value.trim();
-  if (!/^[6-9]\d{9}$/.test(mobile)) {
-    document.getElementById("mobileError").textContent = "Please enter a valid 10-digit mobile number.";
-    document.getElementById("mobileError").style.display = "block";
-    return;
-  }
-  currentMobile = mobile;
-  const btn = document.getElementById("sendOtpBtn");
-  btn.disabled = true; btn.textContent = "Sending...";
-
-  try {
-    const data = await apiPost("sendotp", {mobile});
-    btn.disabled = false; btn.textContent = "Send OTP";
-    if (data.success || data.responseCode) {
-      document.getElementById("otpSubText").textContent = `Code sent to +91 ${mobile}`;
-      showStep("otp");
-      setupOTPInputs();
-      startTimer();
-    } else {
-      document.getElementById("mobileError").textContent = data.message || "Failed to send OTP. Try again.";
-      document.getElementById("mobileError").style.display = "block";
-    }
-  } catch(e) {
-    btn.disabled = false; btn.textContent = "Send OTP";
-    document.getElementById("mobileError").textContent = "Network error. Try again.";
-    document.getElementById("mobileError").style.display = "block";
-  }
+async function sendOTP(){
+  const mobile=document.getElementById("mobileInp").value.trim();
+  if(!/^[6-9]\d{9}$/.test(mobile)){document.getElementById("mobileErr").textContent="Valid 10-digit number enter karo.";return;}
+  curMobile=mobile;
+  const btn=document.getElementById("sendBtn");
+  btn.disabled=true;btn.textContent="Sending...";
+  try{
+    const data=await apiPost("sendotp",{mobile});
+    btn.disabled=false;btn.textContent="Send OTP";
+    if(data.success||data.data){
+      isNewUser=!(data.data?.exists??true);
+      if(isNewUser){showStep("name");}
+      else{document.getElementById("otpSub").textContent=`Code sent to +91 ${mobile}`;showStep("otp");setupOTP();startTimer();}
+    }else{document.getElementById("mobileErr").textContent=data.message||"Failed. Try again.";}
+  }catch(e){btn.disabled=false;btn.textContent="Send OTP";document.getElementById("mobileErr").textContent="Network error.";}
 }
 
-function setupOTPInputs() {
-  const inputs = ['o1','o2','o3','o4','o5','o6'].map(id => document.getElementById(id));
-  inputs.forEach((inp, i) => {
-    inp.value = "";
-    inp.addEventListener('input', () => {
-      if (inp.value && i < 5) inputs[i+1].focus();
-      if (getOTP().length === 6) verifyOTP();
-    });
-    inp.addEventListener('keydown', e => {
-      if (e.key === 'Backspace' && !inp.value && i > 0) inputs[i-1].focus();
-    });
+function proceedToOTP(){
+  const name=document.getElementById("nameInp").value.trim();
+  if(!name){document.getElementById("nameErr").textContent="Name required.";return;}
+  curName=name;
+  document.getElementById("otpSub").textContent=`Code sent to +91 ${curMobile}`;
+  showStep("otp");setupOTP();startTimer();
+}
+
+function setupOTP(){
+  const ins=["o1","o2","o3","o4","o5","o6"].map(id=>document.getElementById(id));
+  ins.forEach((inp,i)=>{
+    inp.value="";
+    inp.oninput=()=>{if(inp.value&&i<5)ins[i+1].focus();if(getOTP().length===6)verifyOTP();};
+    inp.onkeydown=e=>{if(e.key==="Backspace"&&!inp.value&&i>0)ins[i-1].focus();};
   });
-  inputs[0].focus();
+  ins[0].focus();
+}
+function getOTP(){return["o1","o2","o3","o4","o5","o6"].map(id=>document.getElementById(id).value).join("");}
+
+function startTimer(){
+  let c=30;
+  document.getElementById("timerTxt").style.display="block";
+  document.getElementById("resendBtn").style.display="none";
+  document.getElementById("timerN").textContent=c;
+  if(otpTimer)clearInterval(otpTimer);
+  otpTimer=setInterval(()=>{
+    c--;document.getElementById("timerN").textContent=c;
+    if(c<=0){clearInterval(otpTimer);document.getElementById("timerTxt").style.display="none";document.getElementById("resendBtn").style.display="block";}
+  },1000);
 }
 
-function getOTP() {
-  return ['o1','o2','o3','o4','o5','o6'].map(id => document.getElementById(id).value).join('');
+async function verifyOTP(){
+  const otp=getOTP();if(otp.length!==6)return;
+  const btn=document.getElementById("verifyBtn");
+  btn.disabled=true;btn.textContent="Verifying...";
+  document.getElementById("otpErr").textContent="";
+  try{
+    const data=await apiPost("verifyotp",{mobile:curMobile,otp,name:curName});
+    btn.disabled=false;btn.textContent="Verify & Continue";
+    if(data.success&&data.token){
+      saveAuth(data.token,data.user||{mobile:curMobile,name:curName||curMobile});
+      document.getElementById("otpOk").textContent="✓ Login successful!";
+      setTimeout(()=>{initLanding();showPage("landingPage");},700);
+    }else{document.getElementById("otpErr").textContent=data.message||"Invalid OTP.";}
+  }catch(e){btn.disabled=false;btn.textContent="Verify & Continue";document.getElementById("otpErr").textContent="Network error.";}
 }
 
-function startTimer() {
-  let count = 30;
-  document.getElementById("timerTxt").style.display = "block";
-  document.getElementById("resendBtn").style.display = "none";
-  document.getElementById("timerCount").textContent = count;
-  if (otpTimer) clearInterval(otpTimer);
-  otpTimer = setInterval(() => {
-    count--;
-    document.getElementById("timerCount").textContent = count;
-    if (count <= 0) {
-      clearInterval(otpTimer);
-      document.getElementById("timerTxt").style.display = "none";
-      document.getElementById("resendBtn").style.display = "block";
-    }
-  }, 1000);
-}
-
-async function verifyOTP() {
-  const otp = getOTP();
-  if (otp.length !== 6) return;
-
-  const btn = document.getElementById("verifyOtpBtn");
-  btn.disabled = true; btn.textContent = "Verifying...";
-  document.getElementById("otpError").style.display = "none";
-
-  try {
-    const data = await apiPost("verifyotp", {mobile: currentMobile, otp});
-    btn.disabled = false; btn.textContent = "Verify & Continue";
-
-    if (data.success && data.token) {
-      saveAuth(data.token, String(data.user_id), currentMobile, data.name || currentMobile);
-      document.getElementById("otpInfo").textContent = "✓ Login successful!";
-      document.getElementById("otpInfo").style.display = "block";
-      setTimeout(() => {
-        initLanding();
-        showPage("landingPage");
-      }, 800);
-    } else {
-      document.getElementById("otpError").textContent = data.message || "Invalid OTP. Please try again.";
-      document.getElementById("otpError").style.display = "block";
-    }
-  } catch(e) {
-    btn.disabled = false; btn.textContent = "Verify & Continue";
-    document.getElementById("otpError").textContent = "Network error. Try again.";
-    document.getElementById("otpError").style.display = "block";
-  }
-}
-
-// ══════════════════════════════
-// LANDING
-// ══════════════════════════════
-function initLanding() {
-  const name = AUTH_STATE.name || AUTH_STATE.mobile || "User";
-  document.getElementById("userAvatar").textContent = name[0].toUpperCase();
-  document.getElementById("userName").textContent = name;
+// ══ LANDING ══
+function initLanding(){
+  const name=A.user?.name||A.user?.displayName||curMobile||"User";
+  document.getElementById("uAvatar").textContent=name[0].toUpperCase();
+  document.getElementById("uName").textContent=name;
   loadBatchCards();
 }
 
-function showProfile() {
-  if (confirm(`Logged in as: ${AUTH_STATE.mobile}\nLogout?`)) {
-    try { localStorage.removeItem(STORAGE_KEY); } catch(e) {}
-    AUTH_STATE = {token:null, userId:null, mobile:null, name:null};
-    showPage("loginPage");
-    showStep("mobile");
+function showProfile(){
+  if(confirm(`Logged in as: ${A.user?.mobile||curMobile}\nLogout?`)){
+    try{localStorage.removeItem(KEY);}catch(e){}
+    A={token:null,user:null};
+    showPage("loginPage");showStep("mobile");
   }
 }
 
-async function loadBatchCards() {
-  ['151','152'].forEach(async cid => {
-    try {
-      const data = await apiPost("course", {course_id: cid});
-      const ov = (data.data||[]).find(s => s.type==="overview");
-      const det = ov?.data?.find(d => d.layout_type==="details")?.layout_data?.[0];
-      if (!det) return;
-
+async function loadBatchCards(){
+  // Load 151 and 152 via course-details
+  ["151","152"].forEach(async cid=>{
+    try{
+      const data=await api("course",{course_id:cid});
+      const d=data.data;if(!d)return;
       // Thumbnail
-      const th = document.getElementById(`thumb${cid}`);
-      if (det.thumbnail) {
-        th.outerHTML = `<img class="batch-img" src="${det.thumbnail}" alt="${det.title}" onerror="this.style.display='none'"/>`;
-      } else { th.textContent = cid==='151'?'📚':'🔬'; }
-
+      const th=document.getElementById(`thumb${cid}`);
+      if(d.thumbnail||d.image){
+        const img=d.thumbnail||d.image;
+        th.outerHTML=`<img class="bcard-img" src="${img}" alt="${d.title}" onerror="this.style.display='none'"/>`;
+      }else{th.textContent=cid==="151"?"JEE Batch":"NEET Batch";}
       // Title
-      document.getElementById(`btitle${cid}`).textContent = det.title;
-
+      document.getElementById(`btitle${cid}`).textContent=d.title||`Drona ${cid==="151"?"JEE":"NEET"}`;
       // Tags
-      const tags = [cid==='151'?`<span class="tag tag-jee">JEE 2028</span>`:`<span class="tag tag-neet">NEET 2028</span>`];
-      if (det.is_new) tags.push(`<span class="tag tag-new">New</span>`);
-      if (det.is_trending) tags.push(`<span class="tag tag-trending">Trending</span>`);
-      document.getElementById(`tags${cid}`).innerHTML = tags.join("");
-
+      const tags=[cid==="151"?`<span class="tag tag-jee">JEE 2028</span>`:`<span class="tag tag-neet">NEET 2028</span>`];
+      if(d.is_new||d.isNew)tags.push(`<span class="tag tag-new">New</span>`);
+      if(d.is_trending||d.isTrending)tags.push(`<span class="tag tag-trend">Trending</span>`);
+      document.getElementById(`tags${cid}`).innerHTML=tags.join("");
       // Price
-      if (det.offer_price) {
-        const offer = parseFloat(det.offer_price).toLocaleString('en-IN');
-        const mrp = parseFloat(det.mrp).toLocaleString('en-IN');
-        const disc = Math.round(det.discount_percentage);
-        document.getElementById(`bprice${cid}`).innerHTML = `<span class="price-offer">₹${offer}</span><span class="price-mrp">₹${mrp}</span><span class="price-disc">${disc}% off</span>`;
+      if(d.offer_price||d.offerPrice){
+        const offer=parseFloat(d.offer_price||d.offerPrice).toLocaleString("en-IN");
+        const mrp=parseFloat(d.mrp||d.price||0).toLocaleString("en-IN");
+        const disc=d.discount_percentage||d.discountPercentage||0;
+        document.getElementById(`bprice${cid}`).innerHTML=`<span class="price-offer">₹${offer}</span><span class="price-mrp">₹${mrp}</span><span class="price-disc">${Math.round(disc)}% off</span>`;
       }
-    } catch(e) {}
+    }catch(e){}
   });
 }
 
-// ══════════════════════════════
-// COURSE STATE
-// ══════════════════════════════
-let S = {course:null, folderId:"0", folderTitle:"", tab:"ov", ovLoaded:false, ctLoaded:false, stack:[], hls:null};
+// ══ COURSE STATE ══
+let S={id:null,type:"jee",folderId:null,folderTitle:"",tab:"ov",ovLoaded:false,ctLoaded:false,liveLoaded:false,stack:[],hls:null};
 
-function openCourse(course) {
-  S = {course, folderId:"0", folderTitle:"", tab:"ov", ovLoaded:false, ctLoaded:false, stack:[], hls:null};
-  document.getElementById("cBackBtn").onclick = () => showPage("landingPage");
-  document.getElementById("bcCur").textContent = course.name;
-  document.getElementById("cHero").innerHTML = `<div class="course-hero-ph">Loading...</div>`;
-  document.getElementById("cTitle").textContent = course.name;
-  document.getElementById("cMeta").textContent = "";
-  document.getElementById("cTags").innerHTML = "";
-  document.getElementById("pkgCard").innerHTML = "";
-  switchTab("ov");
-  showPage("coursePage");
+function openCourse(id,type){
+  S={id,type,folderId:null,folderTitle:"",tab:"ov",ovLoaded:false,ctLoaded:false,liveLoaded:false,stack:[],hls:null};
+  document.getElementById("cBack").onclick=()=>showPage("landingPage");
+  document.getElementById("bcCur").textContent=type==="jee"?"Drona JEE":"Drona NEET";
+  document.getElementById("cHero").innerHTML=`<div class="chero-ph">Loading...</div>`;
+  document.getElementById("cTitle").textContent="";
+  document.getElementById("cMeta").textContent="";
+  document.getElementById("cTags").innerHTML="";
+  document.getElementById("pkgCard").innerHTML="";
+  switchTab("ov");showPage("coursePage");
   loadOverview();
 }
 
-function switchTab(tab) {
-  S.tab = tab;
-  document.getElementById("tabOv").classList.toggle("active", tab==="ov");
-  document.getElementById("tabCt").classList.toggle("active", tab==="ct");
-  document.getElementById("ovPane").style.display = tab==="ov"?"block":"none";
-  document.getElementById("ctPane").style.display = tab==="ct"?"block":"none";
-  if (tab==="ct" && !S.ctLoaded) loadContent();
+function switchTab(tab){
+  S.tab=tab;
+  ["Ov","Ct","Live"].forEach(t=>{
+    document.getElementById("tab"+t).classList.toggle("active",tab===t.toLowerCase());
+    document.getElementById(t.toLowerCase()+"Pane").style.display=tab===t.toLowerCase()?"block":"none";
+  });
+  if(tab==="ct"&&!S.ctLoaded)loadContent();
+  if(tab==="live"&&!S.liveLoaded)loadLive();
 }
 
-// ══════════════════════════════
-// OVERVIEW
-// ══════════════════════════════
-async function loadOverview() {
-  if (S.ovLoaded) return;
-  S.ovLoaded = true;
-  document.getElementById("ovLoad").style.display = "block";
-  document.getElementById("ovBody").style.display = "none";
-  try {
-    const data = await apiPost("course", {course_id: S.course.id});
-    const ov = (data.data||[]).find(s => s.type==="overview");
-    const det = ov?.data?.find(d => d.layout_type==="details")?.layout_data?.[0];
-    const pkgs = ov?.data?.find(d => d.layout_type==="packages")?.layout_data||[];
+// ══ OVERVIEW ══
+async function loadOverview(){
+  if(S.ovLoaded)return;S.ovLoaded=true;
+  document.getElementById("ovLoad").style.display="block";
+  document.getElementById("ovBody").style.display="none";
+  try{
+    const data=await api("course",{course_id:S.id});
+    const d=data.data;if(!d)throw new Error("No data");
 
-    if (det) {
-      if (det.thumbnail) {
-        document.getElementById("cHero").innerHTML = `<img class="course-hero-img" src="${det.thumbnail}" alt="${det.title}" onerror="this.parentElement.innerHTML='<div class=\\'course-hero-ph\\'>📚</div>'"/>`;
-      }
-      document.getElementById("cTitle").textContent = det.title;
-      if (det.offer_price) {
-        const offer = parseFloat(det.offer_price).toLocaleString('en-IN');
-        const mrp = parseFloat(det.mrp).toLocaleString('en-IN');
-        const disc = Math.round(det.discount_percentage);
-        document.getElementById("cMeta").innerHTML = `<span style="font-size:1.05rem;font-weight:600;color:var(--tp)">₹${offer}</span> <span style="color:var(--tm);text-decoration:line-through;font-size:0.88rem">₹${mrp}</span> <span style="color:var(--green);font-size:0.8rem;font-weight:600">${disc}% off</span>`;
-      }
-      const tags = [S.course.type==="jee"?`<span class="tag tag-jee">JEE 2028</span>`:`<span class="tag tag-neet">NEET 2028</span>`];
-      if (det.is_new) tags.push(`<span class="tag tag-new">New</span>`);
-      if (det.is_trending) tags.push(`<span class="tag tag-trending">Trending</span>`);
-      document.getElementById("cTags").innerHTML = tags.join("");
-      document.getElementById("ovBody").innerHTML = `<div class="ov-desc">${det.description||""}</div>`;
+    // Hero image
+    const img=d.thumbnail||d.image||d.banner;
+    if(img){document.getElementById("cHero").innerHTML=`<img class="chero-img" src="${img}" alt="${d.title}" onerror="this.parentElement.innerHTML='<div class=\\'chero-ph\\'>📚</div>'">`;}
+
+    // Title + meta
+    document.getElementById("cTitle").textContent=d.title||"Course";
+    if(d.offer_price||d.offerPrice){
+      const offer=parseFloat(d.offer_price||d.offerPrice).toLocaleString("en-IN");
+      const mrp=parseFloat(d.mrp||d.price||0).toLocaleString("en-IN");
+      const disc=Math.round(d.discount_percentage||d.discountPercentage||0);
+      document.getElementById("cMeta").innerHTML=`<span style="font-size:1rem;font-weight:600;">₹${offer}</span> <span style="color:var(--tm);text-decoration:line-through;font-size:0.85rem;">₹${mrp}</span> <span style="color:var(--green);font-size:0.78rem;font-weight:600;">${disc}% off</span>`;
     }
 
-    if (pkgs.length) {
-      const pkg = pkgs[0];
-      document.getElementById("pkgCard").innerHTML = `
-        <div class="pkg-card">
-          <img class="pkg-img" src="${pkg.thumbnail}" onerror="this.style.display='none'"/>
-          <div><div class="pkg-label">📦 Bundled Package</div><div class="pkg-title">${pkg.title}</div></div>
-        </div>`;
+    // Tags
+    const tags=[S.type==="jee"?`<span class="tag tag-jee">JEE 2028</span>`:`<span class="tag tag-neet">NEET 2028</span>`];
+    if(d.is_new||d.isNew)tags.push(`<span class="tag tag-new">New</span>`);
+    if(d.is_trending||d.isTrending)tags.push(`<span class="tag tag-trend">Trending</span>`);
+    document.getElementById("cTags").innerHTML=tags.join("");
+
+    // Package
+    const pkg=d.package||d.packages?.[0]||null;
+    if(pkg){
+      document.getElementById("pkgCard").innerHTML=`<div class="pkg-card"><img class="pkg-img" src="${pkg.thumbnail||pkg.image||''}" onerror="this.style.display='none'"/><div><div class="pkg-lbl">📦 Bundled Package</div><div class="pkg-title">${pkg.title||pkg.name||""}</div></div></div>`;
     }
 
-    document.getElementById("ovLoad").style.display = "none";
-    document.getElementById("ovBody").style.display = "block";
-  } catch(e) {
-    document.getElementById("ovLoad").innerHTML = `<h3>Error</h3><p>${e.message}</p>`;
+    // Description
+    const desc=d.description||d.overview||"";
+    document.getElementById("ovBody").innerHTML=`<div class="ov-desc">${desc}</div>`;
+
+    document.getElementById("ovLoad").style.display="none";
+    document.getElementById("ovBody").style.display="block";
+  }catch(e){
+    document.getElementById("ovLoad").innerHTML=`<h3>Error</h3><p>${e.message}</p>`;
   }
 }
 
-// ══════════════════════════════
-// CONTENT
-// ══════════════════════════════
-function updateFolderBc() {
-  const bc = document.getElementById("folderBc");
-  if (!S.folderTitle) { bc.style.display="none"; return; }
-  bc.style.display = "flex";
-  bc.innerHTML = `<span style="cursor:pointer;color:var(--blue)" onclick="goRoot()">${S.course?.name}</span><span style="margin:0 4px">›</span><span>${S.folderTitle}</span>`;
-  document.getElementById("cBackBtn").onclick = S.stack.length>0 ? goBack : ()=>showPage("landingPage");
+// ══ CONTENT ══
+function updateFBc(){
+  const bc=document.getElementById("fBc");
+  if(!S.folderTitle){bc.style.display="none";return;}
+  bc.style.display="block";
+  bc.innerHTML=`<span style="cursor:pointer;color:var(--blue)" onclick="goRoot()">${S.type==="jee"?"JEE":"NEET"}</span> › <span>${S.folderTitle}</span>`;
+  document.getElementById("cBack").onclick=S.stack.length>0?goBack:()=>showPage("landingPage");
 }
 
-function goRoot() {
-  S.folderId="0"; S.folderTitle=""; S.stack=[]; S.ctLoaded=false;
-  updateFolderBc();
-  if (S.tab!=="ct") switchTab("ct"); else loadContent();
+function goRoot(){S.folderId=null;S.folderTitle="";S.stack=[];S.ctLoaded=false;updateFBc();if(S.tab!=="ct")switchTab("ct");else loadContent();}
+function goBack(){if(!S.stack.length){goRoot();return;}const p=S.stack.pop();S.folderId=p.id;S.folderTitle=p.title;S.ctLoaded=false;updateFBc();loadContent();}
+
+function ctShow(w){
+  document.getElementById("ctLoad").style.display=w==="load"?"block":"none";
+  document.getElementById("ctErr").style.display=w==="err"?"block":"none";
+  document.getElementById("ctData").style.display=w==="data"?"block":"none";
 }
 
-function goBack() {
-  if (!S.stack.length) { goRoot(); return; }
-  const prev = S.stack.pop();
-  S.folderId=prev.id; S.folderTitle=prev.title; S.ctLoaded=false;
-  updateFolderBc(); loadContent();
-}
+async function loadContent(){
+  S.ctLoaded=true;ctShow("load");updateFBc();
+  try{
+    const params={course_id:S.id};
+    if(S.folderId)params.folder_id=S.folderId;
+    const data=await api("content",params);
+    const items=data.data||[];
+    const folders=items.filter(i=>i.type==="folder"||i.contentType==="folder");
+    const videos=items.filter(i=>i.type==="file"||i.type==="video"||i.contentType==="video"||[1,2].includes(Number(i.file_type||i.fileType)));
 
-function ctShow(what) {
-  document.getElementById("ctLoad").style.display = what==="load"?"block":"none";
-  document.getElementById("ctErr").style.display = what==="err"?"block":"none";
-  document.getElementById("ctData").style.display = what==="data"?"block":"none";
-}
-
-async function loadContent() {
-  S.ctLoaded=true; ctShow("load");
-  document.getElementById("liveSection").style.display="none";
-  updateFolderBc();
-  try {
-    const data = await apiPost("content", {course_id:S.course.id, folder_id:S.folderId, parent_course_id:"0"});
-    const items = data.data||[];
-    const lives = items.filter(i=>i.data?.is_live===1);
-    const folders = items.filter(i=>i.type==="folder");
-    const videos = items.filter(i=>i.type==="file"&&[1,2].includes(Number(i.data?.file_type||i.data?.content_type)));
-
-    renderLive(lives);
     renderFolders(folders);
     renderVideos(videos);
 
-    if (!lives.length&&!folders.length&&!videos.length) {
-      ctShow("err"); document.getElementById("ctErrMsg").textContent="No content found."; return;
-    }
+    if(!folders.length&&!videos.length){ctShow("err");document.getElementById("ctErrMsg").textContent="No content found.";return;}
     ctShow("data");
-  } catch(e) {
-    ctShow("err"); document.getElementById("ctErrMsg").textContent=e.message;
-  }
+  }catch(e){ctShow("err");document.getElementById("ctErrMsg").textContent=e.message;}
 }
 
-function renderLive(lives) {
-  if (!lives.length) return;
-  document.getElementById("liveSection").style.display="block";
-  document.getElementById("liveCards").innerHTML="";
-  lives.forEach(l=>{
-    const btn=document.createElement("button");
-    btn.className="live-card";
-    btn.innerHTML=`<div class="live-dot"></div><div class="live-lbl">Live</div><div class="live-name">${l.title}</div><button class="join-btn">Join →</button>`;
-    btn.onclick=()=>openVideo(l);
-    document.getElementById("liveCards").appendChild(btn);
-  });
-}
-
-function renderFolders(folders) {
+function renderFolders(folders){
   const sec=document.getElementById("foldersSection");
   const list=document.getElementById("foldersList");
-  if (!folders.length){sec.style.display="none";return;}
+  if(!folders.length){sec.style.display="none";return;}
   sec.style.display="block";
-  document.getElementById("fCount").textContent=folders.length;
+  document.getElementById("fCnt").textContent=folders.length;
   list.innerHTML="";
   folders.forEach(f=>{
     const btn=document.createElement("button");
     btn.className="folder-card";
-    const th=f.data?.thumbnail;
-    const vc=f.data?.content_counts;
-    const v=(vc?.video?.paid||0)+(vc?.video?.free||0);
-    const fo=vc?.folders?.total||0;
-    const meta=[fo?`${fo} folders`:'',v?`${v} videos`:''].filter(Boolean).join(' · ')||'Tap to open';
-    btn.innerHTML=`${th?`<img class="folder-img" src="${th}" onerror="this.outerHTML='<div class=\\'folder-img-ph\\'>📁</div>'"/>`:`<div class="folder-img-ph">📁</div>`}
-      <div class="folder-content"><div class="folder-name">${f.title}</div><div class="folder-meta">${meta}</div></div>
-      <div class="folder-arr">›</div>`;
+    const th=f.thumbnail||f.image||f.data?.thumbnail;
+    const vc=f.content_counts||f.contentCounts||f.data?.content_counts;
+    const vids=vc?(vc.video?.paid||0)+(vc.video?.free||0):0;
+    const folds=vc?(vc.folders?.total||0):0;
+    const meta=[folds?`${folds} folders`:"",vids?`${vids} videos`:""].filter(Boolean).join(" · ")||"Tap to open";
+    btn.innerHTML=`${th?`<img class="f-img" src="${th}" onerror="this.outerHTML='<div class=\\'f-ph\\'>📁</div>'">`:`<div class="f-ph">📁</div>`}
+      <div class="f-body"><div class="f-name">${f.title||f.name}</div><div class="f-meta">${meta}</div></div>
+      <div class="f-arr">›</div>`;
     btn.onclick=()=>{
       S.stack.push({id:S.folderId,title:S.folderTitle});
-      S.folderId=f.entity_id||f.data?.id;
-      S.folderTitle=f.title;
-      S.ctLoaded=false;
-      updateFolderBc(); loadContent();
+      S.folderId=f.entity_id||f.id||f.folder_id;
+      S.folderTitle=f.title||f.name;
+      S.ctLoaded=false;updateFBc();loadContent();
     };
     list.appendChild(btn);
   });
 }
 
-function renderVideos(videos) {
+function renderVideos(videos){
   const sec=document.getElementById("videosSection");
   const list=document.getElementById("videosList");
-  if (!videos.length){sec.style.display="none";return;}
+  if(!videos.length){sec.style.display="none";return;}
   sec.style.display="block";
-  document.getElementById("vCount").textContent=videos.length;
+  document.getElementById("vCnt").textContent=videos.length;
   list.innerHTML="";
   videos.forEach(v=>{
     const btn=document.createElement("button");
-    btn.className="video-card";
-    const th=v.data?.thumbnail;
-    const dur=v.data?.duration?formatDur(v.data.duration):"";
-    btn.innerHTML=`${th?`<img class="video-thumb" src="${th}" onerror="this.outerHTML='<div class=\\'play-circle\\'>▶</div>'">`:`<div class="play-circle">▶</div>`}
-      <div class="video-content"><div class="video-name">${v.title}</div><div class="video-meta">${dur?dur+' · ':''}Video Lecture</div></div>
+    btn.className="v-card";
+    const th=v.thumbnail||v.image||v.data?.thumbnail;
+    const dur=v.duration||v.data?.duration;
+    btn.innerHTML=`${th?`<img class="v-thumb" src="${th}" onerror="this.outerHTML='<div class=\\'v-play\\'>▶</div>'">`:`<div class="v-play">▶</div>`}
+      <div class="v-body"><div class="v-name">${v.title||v.name}</div><div class="v-meta">${dur?formatDur(dur)+" · ":""}Video</div></div>
       <span class="hd-badge">HD</span>`;
     btn.onclick=()=>openVideo(v);
     list.appendChild(btn);
   });
 }
 
-function formatDur(s){if(!s)return"";return`${Math.floor(s/60)}:${(s%60).toString().padStart(2,'0')}`;}
+function formatDur(s){if(!s)return"";return`${Math.floor(s/60)}:${(s%60).toString().padStart(2,"0")}`;}
 
-// ══════════════════════════════
-// PLAYER
-// ══════════════════════════════
-async function openVideo(v) {
+// ══ LIVE ══
+async function loadLive(){
+  S.liveLoaded=true;
+  document.getElementById("liveLoad").style.display="block";
+  document.getElementById("liveData").style.display="none";
+  try{
+    const [liveData,upData]=await Promise.all([
+      api("live",{course_id:S.id}),
+      api("upcoming",{course_id:S.id})
+    ]);
+    const lives=liveData.data||[];
+    const upcoming=upData.data||[];
+
+    document.getElementById("liveLoad").style.display="none";
+    document.getElementById("liveData").style.display="block";
+
+    if(!lives.length&&!upcoming.length){
+      document.getElementById("noLive").style.display="block";
+      document.getElementById("liveNowSection").style.display="none";
+      document.getElementById("upcomingSection").style.display="none";
+      return;
+    }
+    document.getElementById("noLive").style.display="none";
+
+    // Live now
+    if(lives.length){
+      document.getElementById("liveNowSection").style.display="block";
+      document.getElementById("liveNowCards").innerHTML="";
+      lives.forEach(l=>{
+        const btn=document.createElement("button");
+        btn.className="live-card";
+        btn.innerHTML=`<div class="live-dot"></div><div class="live-lbl">LIVE</div><div class="live-name">${l.title||l.name}</div><button class="join-btn">Join →</button>`;
+        btn.onclick=()=>openVideo(l);
+        document.getElementById("liveNowCards").appendChild(btn);
+      });
+    }else{document.getElementById("liveNowSection").style.display="none";}
+
+    // Upcoming
+    if(upcoming.length){
+      document.getElementById("upcomingSection").style.display="block";
+      document.getElementById("upcomingCards").innerHTML="";
+      upcoming.forEach(u=>{
+        const div=document.createElement("div");
+        div.className="up-card";
+        const time=u.start_date||u.startDate||u.start_time||u.startTime;
+        const timeStr=time?new Date(Number(time)*1000||time).toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short"}):"Soon";
+        div.innerHTML=`<div class="up-icon">📅</div><div class="up-info"><div class="up-name">${u.title||u.name}</div><div class="up-meta">${timeStr}</div></div>`;
+        document.getElementById("upcomingCards").appendChild(div);
+      });
+    }else{document.getElementById("upcomingSection").style.display="none";}
+  }catch(e){
+    document.getElementById("liveLoad").innerHTML=`<h3>Error</h3><p>${e.message}</p>`;
+  }
+}
+
+// ══ PLAYER ══
+async function openVideo(v){
   showPage("playerPage");
-  document.getElementById("pTitle").textContent=v.title;
+  document.getElementById("pTitle").textContent=v.title||v.name||"Video";
   document.getElementById("pLoad").style.display="flex";
   document.getElementById("pErr").style.display="none";
   document.getElementById("qStrip").style.display="none";
-  document.getElementById("pLoadTxt").textContent="Loading...";
+  document.getElementById("pTxt").textContent="Loading...";
   document.getElementById("pBack").onclick=goBackPlayer;
   destroyHLS();
-  try {
-    const contentId=v.entity_id||v.data?.id;
-    const vdcId=v.data?.vdc_id;
-    let m3u8=null;
-    document.getElementById("pLoadTxt").textContent="Fetching stream...";
-    try {
-      const det=await apiGet("video",{content_id:contentId,course_id:S.course.id});
-      const d=det.data||{};
-      m3u8=d.hls_url||d.video_url||d.stream_url||d.url;
-      if(!m3u8&&d.vdc_id) m3u8=buildM3u8(d.vdc_id);
-    }catch(e){}
-    if(!m3u8&&vdcId) m3u8=buildM3u8(vdcId);
-    if(!m3u8) throw new Error("Stream URL not found.");
-    document.getElementById("pLoadTxt").textContent="Starting player...";
+  try{
+    let m3u8=v.hls_url||v.hlsUrl||v.stream_url||v.streamUrl||v.url||null;
+    const vdcId=v.vdc_id||v.vdcId||v.data?.vdc_id;
+
+    if(!m3u8){
+      document.getElementById("pTxt").textContent="Fetching stream...";
+      const cid=v.entity_id||v.id||v.content_id;
+      try{
+        const det=await api("content",{course_id:S.id,content_id:cid});
+        const d=det.data||{};
+        m3u8=d.hls_url||d.hlsUrl||d.stream_url||d.url;
+        if(!m3u8&&(d.vdc_id||d.vdcId))m3u8=buildM3u8(d.vdc_id||d.vdcId);
+      }catch(e){}
+    }
+    if(!m3u8&&vdcId)m3u8=buildM3u8(vdcId);
+    if(!m3u8)throw new Error("Stream URL not found.");
+    document.getElementById("pTxt").textContent="Starting player...";
     initHLS(m3u8);
   }catch(e){
     document.getElementById("pLoad").style.display="none";
@@ -878,36 +824,26 @@ function initHLS(url){
   destroyHLS();
   if(Hls.isSupported()){
     const hls=new Hls({maxBufferLength:30,maxMaxBufferLength:60});
-    S.hls=hls;
-    hls.loadSource(url);
-    hls.attachMedia(video);
-    hls.on(Hls.Events.MANIFEST_PARSED,(e,data)=>{
+    S.hls=hls;hls.loadSource(url);hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED,(e,d)=>{
       document.getElementById("pLoad").style.display="none";
-      renderQuality(data.levels||[]);
-      video.play().catch(()=>{});
+      renderQ(d.levels||[]);video.play().catch(()=>{});
     });
-    hls.on(Hls.Events.ERROR,(e,data)=>{
-      if(data.fatal){
-        document.getElementById("pLoad").style.display="none";
-        document.getElementById("pErr").style.display="flex";
-        document.getElementById("pErrMsg").textContent=data.details||"Stream error";
-      }
+    hls.on(Hls.Events.ERROR,(e,d)=>{
+      if(d.fatal){document.getElementById("pLoad").style.display="none";document.getElementById("pErr").style.display="flex";document.getElementById("pErrMsg").textContent=d.details||"Stream error";}
     });
-  } else if(video.canPlayType("application/vnd.apple.mpegurl")){
+  }else if(video.canPlayType("application/vnd.apple.mpegurl")){
     video.src=url;
     video.addEventListener("loadedmetadata",()=>{document.getElementById("pLoad").style.display="none";video.play();},{once:true});
-  } else {
-    document.getElementById("pLoad").style.display="none";
-    document.getElementById("pErr").style.display="flex";
-    document.getElementById("pErrMsg").textContent="Browser does not support HLS.";
+  }else{
+    document.getElementById("pLoad").style.display="none";document.getElementById("pErr").style.display="flex";document.getElementById("pErrMsg").textContent="Browser HLS support nahi karta.";
   }
 }
 
-function renderQuality(levels){
+function renderQ(levels){
   if(!levels.length)return;
   document.getElementById("qStrip").style.display="flex";
-  const btns=document.getElementById("qBtns");
-  btns.innerHTML="";
+  const btns=document.getElementById("qBtns");btns.innerHTML="";
   levels.forEach((q,i)=>{
     const btn=document.createElement("button");
     btn.className="q-btn"+(i===0?" active":"");
@@ -919,26 +855,15 @@ function renderQuality(levels){
 
 function destroyHLS(){
   if(S.hls){try{S.hls.destroy();}catch(e){}S.hls=null;}
-  const v=document.getElementById("pvideo");
-  v.pause();v.src="";v.load();
+  const v=document.getElementById("pvideo");v.pause();v.src="";v.load();
 }
 
-function goBackPlayer(){
-  destroyHLS();showPage("coursePage");
-  if(S.tab!=="ct")switchTab("ct");
-}
+function goBackPlayer(){destroyHLS();showPage("coursePage");if(S.tab!=="ct")switchTab("ct");}
 
-// ══════════════════════════════
-// INIT
-// ══════════════════════════════
-(function init(){
-  if(loadAuth()){
-    initLanding();
-    showPage("landingPage");
-  } else {
-    showPage("loginPage");
-    showStep("mobile");
-  }
+// ══ INIT ══
+(function(){
+  if(loadAuth()){initLanding();showPage("landingPage");}
+  else{showPage("loginPage");showStep("mobile");}
 })();
 </script>
 </body>
