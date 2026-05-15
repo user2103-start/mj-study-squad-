@@ -451,7 +451,9 @@ let otpTimer=null,curMobile="",curName="",isNewUser=false;
 
 function showStep(s){
   ["stepMobile","stepName","stepOTP"].forEach(id=>{document.getElementById(id).style.display="none";});
-  document.getElementById("step"+s.charAt(0).toUpperCase()+s.slice(1)).style.display="block";
+  const map={"mobile":"stepMobile","name":"stepName","otp":"stepOTP"};
+  const el=document.getElementById(map[s]);
+  if(el)el.style.display="block";
   document.getElementById("mobileErr").textContent="";
   document.getElementById("otpErr").textContent="";
   document.getElementById("otpOk").textContent="";
@@ -466,11 +468,15 @@ async function sendOTP(){
   try{
     const data=await apiPost("sendotp",{mobile});
     btn.disabled=false;btn.textContent="Send OTP";
-    if(data.success||data.data){
-      isNewUser=!(data.data?.exists??true);
+    // OTP sent — always go to OTP screen regardless of response structure
+    if(data.success===false&&data.error&&!data.message){
+      document.getElementById("mobileErr").textContent=data.error||"Failed. Try again.";
+    } else {
+      isNewUser=data.data?.exists===false;
+      document.getElementById("otpSub").textContent="OTP sent to +91 "+mobile;
       if(isNewUser){showStep("name");}
-      else{document.getElementById("otpSub").textContent=`Code sent to +91 ${mobile}`;showStep("otp");setupOTP();startTimer();}
-    }else{document.getElementById("mobileErr").textContent=data.message||"Failed. Try again.";}
+      else{showStep("otp");setupOTP();startTimer();}
+    }
   }catch(e){btn.disabled=false;btn.textContent="Send OTP";document.getElementById("mobileErr").textContent="Network error.";}
 }
 
@@ -685,7 +691,7 @@ function renderFolders(folders){
     const btn=document.createElement("button");
     btn.className="folder-card";
     const th=f.thumbnail||f.image||f.data?.thumbnail;
-    const vc=f.content_counts||f.contentCounts||f.data?.content_counts;
+  const vc=f.content_counts||f.contentCounts||f.data?.content_counts;
     const vids=vc?(vc.video?.paid||0)+(vc.video?.free||0):0;
     const folds=vc?(vc.folders?.total||0):0;
     const meta=[folds?`${folds} folders`:"",vids?`${vids} videos`:""].filter(Boolean).join(" · ")||"Tap to open";
