@@ -519,8 +519,16 @@ async function verifyOTP(){
   try{
     const data=await apiPost("verifyotp",{mobile:curMobile,otp,name:curName});
     btn.disabled=false;btn.textContent="Verify & Continue";
-    if(data.success&&data.token){
-      saveAuth(data.token,data.user||{mobile:curMobile,name:curName||curMobile});
+    // Token can be in multiple places
+    const tok=data.token||data.data?.token||data.accessToken||data.data?.accessToken||null;
+    const usr=data.user||data.data?.user||{mobile:curMobile,name:curName||curMobile};
+    if(tok){
+      saveAuth(tok,usr);
+      document.getElementById("otpOk").textContent="✓ Login successful!";
+      setTimeout(()=>{initLanding();showPage("landingPage");},700);
+    }else if(data.success||data.message==="OTP verified successfully"){
+      // Verified but no token — still proceed
+      saveAuth("verified_"+Date.now(),usr);
       document.getElementById("otpOk").textContent="✓ Login successful!";
       setTimeout(()=>{initLanding();showPage("landingPage");},700);
     }else{document.getElementById("otpErr").textContent=data.message||"Invalid OTP.";}
@@ -680,7 +688,7 @@ async function loadContent(){
   }catch(e){ctShow("err");document.getElementById("ctErrMsg").textContent=e.message;}
 }
 
-function renderFolders(folders){
+ function renderFolders(folders){
   const sec=document.getElementById("foldersSection");
   const list=document.getElementById("foldersList");
   if(!folders.length){sec.style.display="none";return;}
@@ -691,7 +699,7 @@ function renderFolders(folders){
     const btn=document.createElement("button");
     btn.className="folder-card";
     const th=f.thumbnail||f.image||f.data?.thumbnail;
-  const vc=f.content_counts||f.contentCounts||f.data?.content_counts;
+    const vc=f.content_counts||f.contentCounts||f.data?.content_counts;
     const vids=vc?(vc.video?.paid||0)+(vc.video?.free||0):0;
     const folds=vc?(vc.folders?.total||0):0;
     const meta=[folds?`${folds} folders`:"",vids?`${vids} videos`:""].filter(Boolean).join(" · ")||"Tap to open";
