@@ -114,7 +114,7 @@ module.exports = async function handler(req, res) {
       });
       const data = await r.json();
       // Full raw response + extracted token
-      const tok = data.data?.token || data.data?.access_token || data.token || data.accessToken || null;
+      const tok = data.data?.accessToken || data.data?.token || data.data?.access_token || data.token || data.accessToken || null;
       const usr = data.data?.user || data.user || { mobile };
       return res.status(200).json({
         success: !!tok || data.success || false,
@@ -258,4 +258,4 @@ module.exports = async function handler(req, res) {
   } catch (err) {
     return res.status(500).json({ success: false, error: err.message });
   }
-};
+}
