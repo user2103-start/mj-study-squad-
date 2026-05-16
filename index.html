@@ -663,8 +663,7 @@ async function loadOverview(){
     document.getElementById("ovBody").innerHTML='<div class="ov-desc">'+(det.description||"")+"</div>";
     document.getElementById("ovLoad").style.display="none";
     document.getElementById("ovBody").style.display="block";
-  }catch(e){
-    document.getElementById("ovLoad").innerHTML="<h3>Error</h3><p>"+e.message+"</p>";
+  }catch(e){document.getElementById("ovLoad").innerHTML="<h3>Error</h3><p>"+e.message+"</p>";
   }
 }
 
@@ -969,6 +968,41 @@ function renderVideos(videos){
 }
 
 function formatDur(s){if(!s)return"";return`${Math.floor(s/60)}:${(s%60).toString().padStart(2,"0")}`;}
+
+function ctShow(w){
+  document.getElementById("ctLoad").style.display=w==="load"?"block":"none";
+  document.getElementById("ctErr").style.display=w==="err"?"block":"none";
+  document.getElementById("ctData").style.display=w==="data"?"block":"none";
+}
+
+async function loadContent(){
+  S.ctLoaded=true;
+  ctShow("load");
+  document.getElementById("liveInContent").style.display="none";
+  updateFBc();
+  try{
+    const params={course_id:S.id};
+    if(S.folderId)params.folder_id=S.folderId;
+    if(S.parentCourseId)params.parent_course_id=S.parentCourseId;
+    const data=await api("content",params);
+    const items=data.data||[];
+    const lives=items.filter(i=>i.data?.is_live===1);
+    const folders=items.filter(i=>i.type==="folder");
+    const videos=items.filter(i=>i.type==="file"&&Number(i.data?.file_type)===2&&i.data?.vdc_id);
+    renderLiveInContent(lives);
+    renderFolders(folders);
+    renderVideos(videos);
+    if(!lives.length&&!folders.length&&!videos.length){
+      ctShow("err");
+      document.getElementById("ctErrMsg").textContent="No content found.";
+      return;
+    }
+    ctShow("data");
+  }catch(e){
+    ctShow("err");
+    document.getElementById("ctErrMsg").textContent=e.message;
+  }
+}
 
 // ══ PACKAGE ══
 function openPackage(pkgId, parentId){
