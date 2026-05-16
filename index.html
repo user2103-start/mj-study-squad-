@@ -603,15 +603,16 @@ async function loadBatchCards(){
 // ══ COURSE STATE ══
 let S={id:null,type:"jee",folderId:null,folderTitle:"",tab:"ov",ovLoaded:false,ctLoaded:false,liveLoaded:false,stack:[],hls:null};
 
-function openCourse(id,type){
-  S={id,type,folderId:null,folderTitle:"",tab:"ov",ovLoaded:false,ctLoaded:false,liveLoaded:false,pkgLoaded:false,pkgId:null,stack:[],hls:null};
-  document.getElementById("cBack").onclick=()=>showPage("landingPage");
-  document.getElementById("bcCur").textContent=type==="jee"?"Drona JEE":"Drona NEET";
+function openCourse(id, type, parentCourseId){
+  S={id:String(id),type:type||"jee",parentCourseId:parentCourseId||null,folderId:null,folderTitle:"",tab:"ov",ovLoaded:false,ctLoaded:false,liveLoaded:false,pkgLoaded:false,pkgId:null,stack:[],hls:null};
+  document.getElementById("cBack").onclick=parentCourseId?()=>showPage("landingPage"):()=>showPage("landingPage");
+  document.getElementById("bcCur").textContent=type==="pcmb"?"PCMB Bundle":type==="jee"?"Drona JEE":"Drona NEET";
   document.getElementById("cHero").innerHTML=`<div class="chero-ph">Loading...</div>`;
   document.getElementById("cTitle").textContent="";
   document.getElementById("cMeta").textContent="";
   document.getElementById("cTags").innerHTML="";
   document.getElementById("pkgCard").innerHTML="";
+  document.getElementById("tabPkg").style.display="none";
   switchTab("ov");showPage("coursePage");
   loadOverview();
 }
@@ -657,18 +658,14 @@ async function loadOverview(){
       const pkg=pkgs[0];
       S.pkgId=String(pkg.id);
       S.pkgLoaded=false;
-      // Show bundle tab
-      document.getElementById("tabPkg").style.display="block";
-      document.getElementById("tabPkg").textContent="📦 "+( pkg.title||"Bundle");
-      // Also show small info card
-      document.getElementById("pkgCard").innerHTML='<div class="pkg-card" style="cursor:pointer" onclick="switchTab(\'pkg\')"><img class="pkg-img" src="'+(pkg.thumbnail||"")+'" onerror="this.style.display=\'none\'"/><div style="flex:1"><div class="pkg-lbl">&#128230; Bundled Free</div><div class="pkg-title">'+(pkg.title||"")+'</div></div><div style="padding:0 12px;color:var(--tm)">&#8250;</div></div>';
+      document.getElementById("pkgCard").innerHTML='<div class="pkg-card" style="cursor:pointer" onclick="openCourse(\''+pkg.id+'\',\'pcmb\',\''+S.id+'\')"><img class="pkg-img" src="'+(pkg.thumbnail||"")+'" onerror="this.style.display=\'none\'"/><div style="flex:1"><div class="pkg-lbl">📦 Free Bundle — Tap to Open</div><div class="pkg-title">'+(pkg.title||"")+'</div></div><div style="padding:0 12px;color:var(--tm)">›</div></div>';
     }
     document.getElementById("ovBody").innerHTML='<div class="ov-desc">'+(det.description||"")+"</div>";
     document.getElementById("ovLoad").style.display="none";
     document.getElementById("ovBody").style.display="block";
   }catch(e){
     document.getElementById("ovLoad").innerHTML="<h3>Error</h3><p>"+e.message+"</p>";
-    }
+  }
 }
 
 async function loadLive(){
