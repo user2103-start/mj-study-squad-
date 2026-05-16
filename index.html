@@ -358,6 +358,10 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tp);min-h
       <div class="state" id="ctLoad"><div class="spinner"></div><p>Fetching content...</p></div>
       <div class="state" id="ctErr" style="display:none;"><h3>Error</h3><p id="ctErrMsg"></p><button class="retry" onclick="loadContent()">Retry</button></div>
       <div id="ctData" style="display:none;">
+        <div id="liveInContent" style="display:none;">
+          <div class="sec-head" style="margin-bottom:12px;"><div class="sec-title">🔴 Live Now</div></div>
+          <div id="liveInContentCards" style="margin-bottom:20px;"></div>
+        </div>
         <div id="foldersSection" style="display:none;">
           <div class="sec-head"><div class="sec-title">Folders</div><div class="sec-cnt" id="fCnt"></div></div>
           <div class="folders-list" id="foldersList"></div>
@@ -614,131 +618,36 @@ async function loadOverview(){
   document.getElementById("ovBody").style.display="none";
   try{
     const data=await api("course",{course_id:S.id});
-    const d=data.data;if(!d)throw new Error("No data");
-
-    // Hero image
-    const img=d.thumbnail||d.image||d.banner;
-    if(img){document.getElementById("cHero").innerHTML=`<img class="chero-img" src="${img}" alt="${d.title}" onerror="this.parentElement.innerHTML='<div class=\\'chero-ph\\'>📚</div>'">`;}
-
-    // Title + meta
-    document.getElementById("cTitle").textContent=d.title||"Course";
-    if(d.offer_price||d.offerPrice){
-      const offer=parseFloat(d.offer_price||d.offerPrice).toLocaleString("en-IN");
-      const mrp=parseFloat(d.mrp||d.price||0).toLocaleString("en-IN");
-      const disc=Math.round(d.discount_percentage||d.discountPercentage||0);
-      document.getElementById("cMeta").innerHTML=`<span style="font-size:1rem;font-weight:600;">₹${offer}</span> <span style="color:var(--tm);text-decoration:line-through;font-size:0.85rem;">₹${mrp}</span> <span style="color:var(--green);font-size:0.78rem;font-weight:600;">${disc}% off</span>`;
+    const sections=data.data||[];
+    const ovSection=sections.find(s=>s.type==="overview");
+    const det=ovSection?.data?.find(d=>d.layout_type==="details")?.layout_data?.[0];
+    const pkgs=ovSection?.data?.find(d=>d.layout_type==="packages")?.layout_data||[];
+    if(!det)throw new Error("Overview data not found");
+    if(det.thumbnail){document.getElementById("cHero").innerHTML=`<img class="chero-img" src="${det.thumbnail}" alt="${det.title}" onerror="this.parentElement.innerHTML='<div class=\'chero-ph\'>📚</div>'">`;}
+    document.getElementById("cTitle").textContent=det.title||"Course";
+    if(det.offer_price){
+      const offer=parseFloat(det.offer_price).toLocaleString("en-IN");
+      const mrp=parseFloat(det.mrp||0).toLocaleString("en-IN");
+      const disc=Math.round(det.discount_percentage||0);
+      document.getElementById("cMeta").innerHTML=`<span style="font-size:1rem;font-weight:600;">&#8377;${offer}</span> <span style="color:var(--tm);text-decoration:line-through;font-size:0.85rem;">&#8377;${mrp}</span> <span style="color:var(--green);font-size:0.78rem;font-weight:600;">${disc}% off</span>`;
     }
-
-    // Tags
-    const tags=[S.type==="jee"?`<span class="tag tag-jee">JEE 2028</span>`:`<span class="tag tag-neet">NEET 2028</span>`];
-    if(d.is_new||d.isNew)tags.push(`<span class="tag tag-new">New</span>`);
-    if(d.is_trending||d.isTrending)tags.push(`<span class="tag tag-trend">Trending</span>`);
+    const tags=[S.type==="jee"?'<span class="tag tag-jee">JEE 2028</span>':'<span class="tag tag-neet">NEET 2028</span>'];
+    if(det.is_new)tags.push('<span class="tag tag-new">New</span>');
+    if(det.is_trending)tags.push('<span class="tag tag-trend">Trending</span>');
     document.getElementById("cTags").innerHTML=tags.join("");
-
-    // Package
-    const pkg=d.package||d.packages?.[0]||null;
-    if(pkg){
-      document.getElementById("pkgCard").innerHTML=`<div class="pkg-card"><img class="pkg-img" src="${pkg.thumbnail||pkg.image||''}" onerror="this.style.display='none'"/><div><div class="pkg-lbl">📦 Bundled Package</div><div class="pkg-title">${pkg.title||pkg.name||""}</div></div></div>`;
+    if(pkgs.length){
+      const pkg=pkgs[0];
+      const pkgId=pkg.id;const parentId=S.id;
+      document.getElementById("pkgCard").innerHTML='<div class="pkg-card" style="cursor:pointer" onclick="openPackage('+pkgId+',\''+parentId+'\')"><img class="pkg-img" src="'+(pkg.thumbnail||"")+'" onerror="this.style.display=\'none\'"/><div style="flex:1"><div class="pkg-lbl">&#128230; Bundled — Tap to Open</div><div class="pkg-title">'+(pkg.title||"")+'</div></div><div style="padding:0 12px;color:var(--tm)">&#8250;</div></div>';
     }
-
-    // Description
-    const desc=d.description||d.overview||"";
-    document.getElementById("ovBody").innerHTML=`<div class="ov-desc">${desc}</div>`;
-
+    document.getElementById("ovBody").innerHTML='<div class="ov-desc">'+(det.description||"")+"</div>";
     document.getElementById("ovLoad").style.display="none";
     document.getElementById("ovBody").style.display="block";
   }catch(e){
-    document.getElementById("ovLoad").innerHTML=`<h3>Error</h3><p>${e.message}</p>`;
+    document.getElementById("ovLoad").innerHTML="<h3>Error</h3><p>"+e.message+"</p>";
   }
 }
 
-// ══ CONTENT ══
-function updateFBc(){
-  const bc=document.getElementById("fBc");
-  if(!S.folderTitle){bc.style.display="none";return;}
-  bc.style.display="block";
-  bc.innerHTML=`<span style="cursor:pointer;color:var(--blue)" onclick="goRoot()">${S.type==="jee"?"JEE":"NEET"}</span> › <span>${S.folderTitle}</span>`;
-  document.getElementById("cBack").onclick=S.stack.length>0?goBack:()=>showPage("landingPage");
-}
-
-function goRoot(){S.folderId=null;S.folderTitle="";S.stack=[];S.ctLoaded=false;updateFBc();if(S.tab!=="ct")switchTab("ct");else loadContent();}
-function goBack(){if(!S.stack.length){goRoot();return;}const p=S.stack.pop();S.folderId=p.id;S.folderTitle=p.title;S.ctLoaded=false;updateFBc();loadContent();}
-
-function ctShow(w){
-  document.getElementById("ctLoad").style.display=w==="load"?"block":"none";
-  document.getElementById("ctErr").style.display=w==="err"?"block":"none";
-  document.getElementById("ctData").style.display=w==="data"?"block":"none";
-}
-
-async function loadContent(){
-  S.ctLoaded=true;ctShow("load");updateFBc();
-  try{
-    const params={course_id:S.id};
-    if(S.folderId)params.folder_id=S.folderId;
-    const data=await api("content",params);
-    const items=data.data||[];
-    const folders=items.filter(i=>i.type==="folder"||i.contentType==="folder");
-    const videos=items.filter(i=>i.type==="file"||i.type==="video"||i.contentType==="video"||[1,2].includes(Number(i.file_type||i.fileType)));
-
-    renderFolders(folders);
-    renderVideos(videos);
-
-    if(!folders.length&&!videos.length){ctShow("err");document.getElementById("ctErrMsg").textContent="No content found.";return;}
-    ctShow("data");
-  }catch(e){ctShow("err");document.getElementById("ctErrMsg").textContent=e.message;}
-}
-
- function renderFolders(folders){
-  const sec=document.getElementById("foldersSection");
-  const list=document.getElementById("foldersList");
-  if(!folders.length){sec.style.display="none";return;}
-  sec.style.display="block";
-  document.getElementById("fCnt").textContent=folders.length;
-  list.innerHTML="";
-  folders.forEach(f=>{
-    const btn=document.createElement("button");
-    btn.className="folder-card";
-    const th=f.thumbnail||f.image||f.data?.thumbnail;
-    const vc=f.content_counts||f.contentCounts||f.data?.content_counts;
-    const vids=vc?(vc.video?.paid||0)+(vc.video?.free||0):0;
-    const folds=vc?(vc.folders?.total||0):0;
-    const meta=[folds?`${folds} folders`:"",vids?`${vids} videos`:""].filter(Boolean).join(" · ")||"Tap to open";
-    btn.innerHTML=`${th?`<img class="f-img" src="${th}" onerror="this.outerHTML='<div class=\\'f-ph\\'>📁</div>'">`:`<div class="f-ph">📁</div>`}
-      <div class="f-body"><div class="f-name">${f.title||f.name}</div><div class="f-meta">${meta}</div></div>
-      <div class="f-arr">›</div>`;
-    btn.onclick=()=>{
-      S.stack.push({id:S.folderId,title:S.folderTitle});
-      S.folderId=f.entity_id||f.id||f.folder_id;
-      S.folderTitle=f.title||f.name;
-      S.ctLoaded=false;updateFBc();loadContent();
-    };
-    list.appendChild(btn);
-  });
-}
-
-function renderVideos(videos){
-  const sec=document.getElementById("videosSection");
-  const list=document.getElementById("videosList");
-  if(!videos.length){sec.style.display="none";return;}
-  sec.style.display="block";
-  document.getElementById("vCnt").textContent=videos.length;
-  list.innerHTML="";
-  videos.forEach(v=>{
-    const btn=document.createElement("button");
-    btn.className="v-card";
-    const th=v.thumbnail||v.image||v.data?.thumbnail;
-    const dur=v.duration||v.data?.duration;
-    btn.innerHTML=`${th?`<img class="v-thumb" src="${th}" onerror="this.outerHTML='<div class=\\'v-play\\'>▶</div>'">`:`<div class="v-play">▶</div>`}
-      <div class="v-body"><div class="v-name">${v.title||v.name}</div><div class="v-meta">${dur?formatDur(dur)+" · ":""}Video</div></div>
-      <span class="hd-badge">HD</span>`;
-    btn.onclick=()=>openVideo(v);
-    list.appendChild(btn);
-  });
-}
-
-function formatDur(s){if(!s)return"";return`${Math.floor(s/60)}:${(s%60).toString().padStart(2,"0")}`;}
-
-// ══ LIVE ══
 async function loadLive(){
   S.liveLoaded=true;
   document.getElementById("liveLoad").style.display="block";
@@ -769,7 +678,7 @@ async function loadLive(){
       lives.forEach(l=>{
         const btn=document.createElement("button");
         btn.className="live-card";
-        btn.innerHTML=`<div class="live-dot"></div><div class="live-lbl">LIVE</div><div class="live-name">${l.title||l.name}</div><button class="join-btn">Join →</button>`;
+        btn.innerHTML=`<div class="live-dot"></div><div class="live-lbl">LIVE</div><div class="live-name">${l.title||l.name}</div><button class="join-btn"
         btn.onclick=()=>openVideo(l);
         document.getElementById("liveNowCards").appendChild(btn);
       });
@@ -804,21 +713,28 @@ async function openVideo(v){
   document.getElementById("pBack").onclick=goBackPlayer;
   destroyHLS();
   try{
-    let m3u8=v.hls_url||v.hlsUrl||v.stream_url||v.streamUrl||v.url||null;
-    const vdcId=v.vdc_id||v.vdcId||v.data?.vdc_id;
+    const contentId=v.entity_id||v.data?.id||v.id;
+    const vdcId=v.data?.vdc_id||v.vdc_id;
+    let m3u8=null;
 
-    if(!m3u8){
-      document.getElementById("pTxt").textContent="Fetching stream...";
-      const cid=v.entity_id||v.id||v.content_id;
-      try{
-        const det=await api("content",{course_id:S.id,content_id:cid});
-        const d=det.data||{};
-        m3u8=d.hls_url||d.hlsUrl||d.stream_url||d.url;
-        if(!m3u8&&(d.vdc_id||d.vdcId))m3u8=buildM3u8(d.vdc_id||d.vdcId);
-      }catch(e){}
-    }
+    // Step 1: Get video details from proxy (has file_url with direct m3u8)
+    document.getElementById("pTxt").textContent="Fetching stream...";
+    try{
+      const tok=JSON.parse(localStorage.getItem("ss_auth")||"{}").token;
+      const headers={"Content-Type":"application/json"};
+      if(tok&&!tok.startsWith("verified_"))headers["X-User-Token"]=tok;
+      const det=await fetch(PROXY+"?action=video&content_id="+contentId+"&course_id="+S.id,{headers}).then(r=>r.json());
+      const d=det.data||{};
+      // file_url has the direct m3u8 URL
+      m3u8=d.file_url||d.hls_url||d.hlsUrl||d.stream_url||null;
+      if(m3u8&&!m3u8.includes(".m3u8"))m3u8=null;
+      if(!m3u8&&(d.vdc_id||vdcId))m3u8=buildM3u8(d.vdc_id||vdcId);
+    }catch(e){}
+
+    // Step 2: Fallback - build from vdc_id
     if(!m3u8&&vdcId)m3u8=buildM3u8(vdcId);
     if(!m3u8)throw new Error("Stream URL not found.");
+
     document.getElementById("pTxt").textContent="Starting player...";
     initHLS(m3u8);
   }catch(e){
@@ -873,6 +789,106 @@ function destroyHLS(){
 }
 
 function goBackPlayer(){destroyHLS();showPage("coursePage");if(S.tab!=="ct")switchTab("ct");}
+
+function renderLiveInContent(lives){
+  const sec=document.getElementById("liveInContent");
+  if(!sec)return;
+  if(!lives.length){sec.style.display="none";return;}
+  sec.style.display="block";
+  const cards=document.getElementById("liveInContentCards");
+  cards.innerHTML="";
+  lives.forEach(l=>{
+    const btn=document.createElement("button");
+    btn.className="live-card";
+    btn.innerHTML=`<div class="live-dot"></div><div class="live-lbl">LIVE</div><div class="live-name">${l.title||l.name}</div><span class="join-btn">Join →</span>`;
+    btn.onclick=()=>openVideo(l);
+    cards.appendChild(btn);
+  });
+}
+
+function renderFolders(folders){
+  const sec=document.getElementById("foldersSection");
+  const list=document.getElementById("foldersList");
+  if(!folders.length){sec.style.display="none";return;}
+  sec.style.display="block";
+  document.getElementById("fCnt").textContent=folders.length;
+  list.innerHTML="";
+  folders.forEach(f=>{
+    const btn=document.createElement("button");
+    btn.className="folder-card";
+    const th=f.data?.thumbnail;
+    const vc=f.data?.content_counts;
+    const vids=(vc?.video?.paid||0)+(vc?.video?.free||0);
+    const folds=vc?.folders?.total||0;
+    const meta=[folds?`${folds} folders`:"",vids?`${vids} videos`:""].filter(Boolean).join(" · ")||"Tap to open";
+    btn.innerHTML=`${th?`<img class="f-img" src="${th}" onerror="this.outerHTML='<div class=\\'f-ph\\'>📁</div>'">`:`<div class="f-ph">📁</div>`}
+      <div class="f-body"><div class="f-name">${f.title||f.name}</div><div class="f-meta">${meta}</div></div>
+      <div class="f-arr">›</div>`;
+    btn.onclick=()=>{
+      S.stack.push({id:S.folderId,title:S.folderTitle});
+      S.folderId=f.entity_id||f.data?.id||f.id;
+      S.folderTitle=f.title||f.name;
+      S.ctLoaded=false;
+      updateFBc();loadContent();
+    };
+    list.appendChild(btn);
+  });
+}
+
+function renderVideos(videos){
+  const sec=document.getElementById("videosSection");
+  const list=document.getElementById("videosList");
+  if(!videos.length){sec.style.display="none";return;}
+  sec.style.display="block";
+  document.getElementById("vCnt").textContent=videos.length;
+  list.innerHTML="";
+  videos.forEach(v=>{
+    const btn=document.createElement("button");
+    btn.className="v-card";
+    const th=v.data?.thumbnail||v.thumbnail;
+    const dur=v.data?.duration||v.duration;
+    btn.innerHTML=`${th?`<img class="v-thumb" src="${th}" onerror="this.outerHTML='<div class=\\'v-play\\'>▶</div>'">`:`<div class="v-play">▶</div>`}
+      <div class="v-body"><div class="v-name">${v.title||v.name}</div><div class="v-meta">${dur?formatDur(dur)+" · ":""}Video</div></div>
+      <span class="hd-badge">HD</span>`;
+    btn.onclick=()=>openVideo(v);
+    list.appendChild(btn);
+  });
+}
+
+function formatDur(s){if(!s)return"";return`${Math.floor(s/60)}:${(s%60).toString().padStart(2,"0")}`;}
+
+// ══ PACKAGE ══
+function openPackage(pkgId, parentId){
+  S={...S, id:pkgId, folderId:null, folderTitle:"", ctLoaded:false, stack:[], pkgParentId:parentId};
+  document.getElementById("bcCur").textContent="Package Course";
+  document.getElementById("cBack").onclick=()=>{
+    S.id=parentId;S.pkgParentId=null;
+    openCourse(parentId, S.type);
+  };
+  switchTab("ct");
+  // Load package content with parent_course_id
+  loadPackageContent(pkgId, parentId);
+}
+
+async function loadPackageContent(pkgId, parentId){
+  ctShow("load");
+  try{
+    const tok=JSON.parse(localStorage.getItem("ss_auth")||"{}").token;
+    const headers={"Content-Type":"application/json"};
+    if(tok&&!tok.startsWith("verified_"))headers["X-User-Token"]=tok;
+    const r=await fetch(PROXY+"?action=content&course_id="+pkgId+"&parent_course_id="+parentId,{headers});
+    const data=await r.json();
+    const items=data.data||[];
+    const folders=items.filter(i=>i.type==="folder");
+    const videos=items.filter(i=>i.type==="file"&&Number(i.data?.file_type)===2&&i.data?.vdc_id);
+    const lives=items.filter(i=>i.data?.is_live===1);
+    renderLiveInContent(lives);
+    renderFolders(folders);
+    renderVideos(videos);
+    if(!lives.length&&!folders.length&&!videos.length){ctShow("err");document.getElementById("ctErrMsg").textContent="No content found.";return;}
+    ctShow("data");
+  }catch(e){ctShow("err");document.getElementById("ctErrMsg").textContent=e.message;}
+}
 
 // ══ INIT ══
 (function(){
