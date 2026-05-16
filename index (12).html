@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Study Squad</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
+<style>
+:root{
+  --bg:#f7f5f0;--surface:#fff;--surface2:#f0ede8;
+  --border:#e8e4dc;--border2:#d4cfc6;
+  --tp:#1a1612;--ts:#6b6560;--tm:#9b948c;
+  --accent:#d97706;--accent2:#b45309;--accent-bg:#fef3c7;
+  --blue:#2563eb;--green:#059669;--red:#dc2626;
+  --radius:16px;--radius-sm:10px;
+  --shadow:0 1px 3px rgba(0,0,0,0.06),0 4px 16px rgba(0,0,0,0.06);
+  --shadow-md:0 2px 8px rgba(0,0,0,0.08),0 8px 32px rgba(0,0,0,0.08);
+  --shadow-lg:0 4px 16px rgba(0,0,0,0.1),0 16px 48px rgba(0,0,0,0.1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tp);min-height:100vh;-webkit-font-smoothing:antialiased;user-select:none;}
+.page{display:none;min-height:100vh;animation:fadeUp 0.35s ease both;}
+.page.active{display:block;}
+#playerPage.active{display:flex;flex-direction:column;background:#000;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══ LOGIN ═══ */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px;}
+.login-card{background:var(--surface);border:1px solid var(--border);border-radius:24px;padding:36px 28px;width:100%;max-width:380px;box-shadow:var(--shadow-lg);}
+.login-logo{display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:28px;}
+.login-logo-text{font-family:'Instrument Serif',serif;font-size:1.5rem;}
+.login-title{font-family:'Instrument Serif',serif;font-size:1.4rem;text-align:center;margin-bottom:6px;}
+.login-sub{font-size:0.86rem;color:var(--ts);text-align:center;margin-bottom:24px;line-height:1.5;}
+.inp-group{margin-bottom:14px;}
+.inp-label{font-size:0.76rem;font-weight:600;color:var(--ts);margin-bottom:5px;display:block;}
+.inp-wrap{position:relative;}
+.inp-pre{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:0.9rem;color:var(--ts);pointer-events:none;}
+.inp{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px 13px;font-family:'DM Sans',sans-serif;font-size:0.93rem;color:var(--tp);outline:none;transition:all 0.2s;}
+.inp.pl{padding-left:44px;}
+.inp:focus{border-color:var(--accent);background:var(--surface);}
+.inp::placeholder{color:var(--tm);}
+.otp-row{display:flex;gap:8px;justify-content:center;margin:8px 0;}
+.otp-inp{width:44px;height:50px;text-align:center;font-size:1.2rem;font-weight:600;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);outline:none;font-family:'DM Sans',sans-serif;color:var(--tp);transition:all 0.2s;}
+.otp-inp:focus{border-color:var(--accent);background:var(--surface);}
+.btn-primary{width:100%;background:var(--tp);color:#fff;border:none;padding:13px;border-radius:var(--radius-sm);font-family:'DM Sans',sans-serif;font-size:0.93rem;font-weight:500;cursor:pointer;transition:all 0.2s;margin-top:6px;}
+.btn-primary:hover{background:#2d2925;}
+.btn-primary:disabled{opacity:0.5;cursor:not-allowed;}
+.btn-ghost{background:transparent;border:none;color:var(--blue);font-family:'DM Sans',sans-serif;font-size:0.83rem;cursor:pointer;padding:7px 0;display:block;text-align:center;width:100%;margin-top:6px;}
+.err-txt{font-size:0.8rem;color:var(--red);text-align:center;margin-top:6px;min-height:18px;}
+.ok-txt{font-size:0.8rem;color:var(--green);text-align:center;margin-top:6px;min-height:18px;}
+.timer-txt{font-size:0.78rem;color:var(--tm);text-align:center;margin-top:7px;}
+
+/* ═══ LANDING ═══ */
+.wrap{max-width:680px;margin:0 auto;padding:0 18px 60px;}
+.topbar{display:flex;align-items:center;justify-content:space-between;padding:18px 0 0;}
+.topbar-logo{font-family:'Instrument Serif',serif;font-size:1.15rem;color:var(--tp);}
+.user-chip{display:flex;align-items:center;gap:7px;background:var(--surface);border:1px solid var(--border);border-radius:100px;padding:5px 13px;cursor:pointer;transition:all 0.2s;}
+.user-chip:hover{border-color:var(--border2);}
+.u-avatar{width:22px;height:22px;border-radius:50%;background:var(--accent-bg);display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:700;color:var(--accent2);}
+.u-name{font-size:0.78rem;font-weight:500;max-width:70px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+.hero{padding:44px 0 36px;text-align:center;}
+.eyebrow{display:inline-flex;align-items:center;gap:7px;background:var(--accent-bg);border:1px solid #fcd34d;border-radius:100px;padding:5px 14px;font-size:0.76rem;font-weight:600;color:var(--accent2);margin-bottom:24px;}
+.hero-title{font-family:'Instrument Serif',serif;font-size:clamp(2rem,8vw,3.2rem);font-weight:400;line-height:1.15;margin-bottom:18px;letter-spacing:-0.02em;}
+.hero-title em{font-style:italic;color:var(--accent);}
+.hero-sub{font-size:0.98rem;color:var(--ts);line-height:1.65;max-width:460px;margin:0 auto 28px;font-weight:300;}
+.hero-btn{display:inline-flex;align-items:center;gap:7px;background:var(--tp);color:#fff;border:none;padding:12px 24px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:0.9rem;font-weight:500;cursor:pointer;transition:all 0.2s;}
+.hero-btn:hover{background:#2d2925;transform:translateY(-1px);}
+
+.stats-row{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin:36px 0;}
+.stat{flex:1;padding:18px 12px;text-align:center;border-right:1px solid var(--border);}
+.stat:last-child{border-right:none;}
+.stat-n{font-family:'Instrument Serif',serif;font-size:1.7rem;display:block;line-height:1;margin-bottom:3px;}
+.stat-l{font-size:0.68rem;color:var(--tm);font-weight:500;text-transform:uppercase;letter-spacing:0.06em;}
+
+.divider{display:flex;align-items:center;gap:14px;margin:32px 0 20px;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.divider span{font-size:0.74rem;color:var(--tm);font-weight:500;text-transform:uppercase;letter-spacing:0.1em;white-space:nowrap;}
+
+/* BATCH CARDS */
+.batch-cards{display:flex;flex-direction:column;gap:14px;}
+.bcard{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;cursor:pointer;transition:all 0.25s;display:block;width:100%;text-align:left;font-family:'DM Sans',sans-serif;color:var(--tp);box-shadow:var(--shadow);}
+.bcard:hover{border-color:var(--border2);box-shadow:var(--shadow-md);transform:translateY(-2px);}
+.bcard:active{transform:translateY(0);}
+.bcard-img{width:100%;height:190px;object-fit:cover;display:block;background:var(--surface2);}
+.bcard-img-ph{width:100%;height:190px;display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:600;color:var(--tm);background:var(--surface2);}
+.bcard-body{padding:18px 20px 20px;}
+.tags{display:flex;gap:7px;margin-bottom:10px;flex-wrap:wrap;}
+.tag{font-size:0.68rem;font-weight:600;letter-spacing:0.04em;padding:2px 9px;border-radius:100px;text-transform:uppercase;}
+.tag-jee{background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;}
+.tag-neet{background:#f0fdf4;color:#166534;border:1px solid #bbf7d0;}
+.tag-new{background:#dcfce7;color:#166534;border:1px solid #bbf7d0;}
+.tag-trend{background:#fef3c7;color:#92400e;border:1px solid #fde68a;}
+.bcard-title{font-family:'Instrument Serif',serif;font-size:1.28rem;font-weight:400;line-height:1.3;margin-bottom:5px;}
+.bcard-sub{font-size:0.82rem;color:var(--ts);margin-bottom:14px;}
+.bcard-foot{display:flex;align-items:center;justify-content:space-between;}
+.price-row{display:flex;align-items:baseline;gap:7px;}
+.price-offer{font-size:1.1rem;font-weight:600;}
+.price-mrp{font-size:0.82rem;color:var(--tm);text-decoration:line-through;}
+.price-disc{font-size:0.72rem;font-weight:600;color:var(--green);}
+.btn-sm{display:inline-flex;align-items:center;gap:5px;background:var(--tp);color:#fff;border:none;padding:9px 18px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;cursor:pointer;flex-shrink:0;}
+
+.landing-footer{text-align:center;padding:32px 0 16px;font-size:0.76rem;color:var(--tm);border-top:1px solid var(--border);margin-top:44px;}
+
+/* ═══ COURSE PAGE ═══ */
+.cwrap{max-width:680px;margin:0 auto;padding:0 18px 60px;}
+.back-row{padding:18px 0 0;display:flex;align-items:center;gap:10px;}
+.back-btn{display:inline-flex;align-items:center;gap:5px;background:var(--surface);border:1px solid var(--border);color:var(--ts);padding:7px 14px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:0.8rem;font-weight:500;cursor:pointer;transition:all 0.2s;}
+.back-btn:hover{border-color:var(--border2);color:var(--tp);}
+.bc{font-size:0.8rem;color:var(--tm);}
+.bc-link{cursor:pointer;color:var(--blue);}
+
+.chero-img{width:100%;height:210px;object-fit:cover;border-radius:var(--radius);display:block;margin:16px 0;box-shadow:var(--shadow);}
+.chero-ph{width:100%;height:210px;border-radius:var(--radius);display:flex;align-items:center;justify-content:center;background:var(--surface2);margin:16px 0;font-size:0.9rem;color:var(--tm);}
+.ctitle{font-family:'Instrument Serif',serif;font-size:1.65rem;font-weight:400;line-height:1.2;margin-bottom:6px;}
+.cmeta{font-size:0.84rem;color:var(--ts);margin-bottom:16px;}
+
+.pkg-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px 15px;display:flex;align-items:center;gap:11px;margin-bottom:18px;box-shadow:var(--shadow);}
+.pkg-img{width:52px;height:52px;border-radius:var(--radius-sm);object-fit:cover;flex-shrink:0;}
+.pkg-lbl{font-size:0.64rem;font-weight:600;color:var(--accent);text-transform:uppercase;letter-spacing:0.06em;margin-bottom:3px;}
+.pkg-title{font-size:0.86rem;font-weight:500;line-height:1.3;}
+
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:22px;}
+.tab{padding:11px 16px;font-size:0.82rem;font-weight:500;color:var(--tm);cursor:pointer;border:none;background:transparent;font-family:'DM Sans',sans-serif;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.2s;}
+.tab:hover{color:var(--ts);}
+.tab.active{color:var(--tp);border-bottom-color:var(--tp);}
+
+.ov-desc{font-size:0.87rem;line-height:1.75;color:var(--ts);}
+.ov-desc img{max-width:100%;border-radius:var(--radius-sm);margin:7px 0;}
+.ov-desc h1,.ov-desc h2,.ov-desc h3{font-family:'Instrument Serif',serif;font-weight:400;color:var(--tp);margin:13px 0 5px;}
+.ov-desc strong{color:var(--tp);font-weight:600;}
+.ov-desc p{margin-bottom:8px;}
+.ov-desc ol,.ov-desc ul{padding-left:17px;margin-bottom:8px;}
+.ov-desc li{margin-bottom:5px;}
+
+.sec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px;}
+.sec-title{font-size:0.68rem;font-weight:600;color:var(--tm);text-transform:uppercase;letter-spacing:0.1em;}
+.sec-cnt{font-size:0.68rem;color:var(--tm);background:var(--surface2);border:1px solid var(--border);padding:2px 7px;border-radius:100px;}
+
+/* LIVE */
+.live-card{background:#fff5f5;border:1px solid #fecaca;border-radius:var(--radius);padding:13px 15px;display:flex;align-items:center;gap:11px;cursor:pointer;width:100%;text-align:left;font-family:'DM Sans',sans-serif;color:var(--tp);transition:all 0.2s;margin-bottom:8px;}
+.live-dot{width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0;animation:lp 1.4s ease-in-out infinite;}
+@keyframes lp{0%{box-shadow:0 0 0 0 rgba(220,38,38,0.4);}70%{box-shadow:0 0 0 7px rgba(220,38,38,0);}100%{box-shadow:0 0 0 0 rgba(220,38,38,0);}}
+.live-lbl{font-size:0.65rem;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:0.08em;}
+.live-name{font-size:0.87rem;font-weight:500;flex:1;}
+.join-btn{background:var(--red);color:white;border:none;padding:6px 13px;border-radius:100px;font-size:0.72rem;font-weight:600;cursor:pointer;font-family:'DM Sans',sans-serif;flex-shrink:0;}
+
+/* UPCOMING */
+.up-card{background:#fffbeb;border:1px solid #fde68a;border-radius:var(--radius);padding:13px 15px;display:flex;align-items:center;gap:11px;margin-bottom:8px;}
+.up-icon{width:36px;height:36px;border-radius:50%;background:var(--accent-bg);display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0;}
+.up-info{flex:1;}
+.up-name{font-size:0.87rem;font-weight:500;margin-bottom:2px;}
+.up-meta{font-size:0.72rem;color:var(--ts);}
+
+/* FOLDER */
+.folders-list{display:flex;flex-direction:column;gap:9px;margin-bottom:22px;}
+.folder-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;cursor:pointer;overflow:hidden;transition:all 0.22s;width:100%;text-align:left;font-family:'DM Sans',sans-serif;color:var(--tp);box-shadow:var(--shadow);}
+.folder-card:hover{border-color:var(--border2);box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.f-img{width:74px;height:74px;object-fit:cover;flex-shrink:0;display:block;}
+.f-ph{width:74px;height:74px;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--surface2);color:var(--tm);font-size:0.8rem;}
+.f-body{flex:1;padding:12px 14px;}
+.f-name{font-size:0.88rem;font-weight:500;margin-bottom:3px;line-height:1.3;}
+.f-meta{font-size:0.72rem;color:var(--tm);}
+.f-arr{padding:0 14px;color:var(--tm);font-size:0.88rem;}
+
+/* VIDEOS */
+.videos-list{display:flex;flex-direction:column;gap:7px;}
+.v-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);display:flex;align-items:center;gap:12px;padding:12px 14px;cursor:pointer;width:100%;text-align:left;font-family:'DM Sans',sans-serif;color:var(--tp);transition:all 0.22s;box-shadow:var(--shadow);}
+.v-card:hover{border-color:var(--border2);box-shadow:var(--shadow-md);transform:translateY(-1px);}
+.v-thumb{width:74px;height:46px;border-radius:var(--radius-sm);object-fit:cover;flex-shrink:0;background:var(--surface2);}
+.v-play{width:40px;height:40px;border-radius:50%;flex-shrink:0;background:var(--tp);display:flex;align-items:center;justify-content:center;color:white;font-size:0.85rem;}
+.v-body{flex:1;min-width:0;}
+.v-name{font-size:0.85rem;font-weight:500;margin-bottom:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.3;}
+.v-meta{font-size:0.72rem;color:var(--tm);}
+.hd-badge{font-size:0.62rem;font-weight:700;color:var(--blue);background:#eff6ff;border:1px solid #bfdbfe;padding:2px 6px;border-radius:4px;flex-shrink:0;}
+
+/* STATE */
+.state{padding:52px 18px;text-align:center;}
+.spinner{width:28px;height:28px;border-radius:50%;border:2px solid var(--border2);border-top-color:var(--tp);animation:spin 0.8s linear infinite;margin:0 auto 12px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.state p{font-size:0.85rem;color:var(--tm);}
+.state h3{font-family:'Instrument Serif',serif;font-size:1.15rem;margin-bottom:5px;}
+.retry{margin-top:12px;background:var(--tp);color:white;border:none;padding:9px 20px;border-radius:100px;font-family:'DM Sans',sans-serif;font-size:0.82rem;font-weight:500;cursor:pointer;}
+
+/* ═══ PLAYER ═══ */
+.p-nav{display:flex;align-items:center;gap:11px;padding:10px 14px;background:rgba(255,255,255,0.05);border-bottom:1px solid rgba(255,255,255,0.08);flex-shrink:0;}
+.p-back{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,0.1);border:none;display:flex;align-items:center;justify-content:center;cursor:pointer;color:white;font-size:0.85rem;transition:all 0.2s;flex-shrink:0;}
+.p-back:hover{background:rgba(255,255,255,0.18);}
+.p-title{font-size:0.85rem;font-weight:500;color:rgba(255,255,255,0.9);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.p-main{flex:1;display:flex;align-items:center;justify-content:center;background:#000;position:relative;min-height:240px;}
+#pvideo{width:100%;max-height:calc(100vh - 96px);display:block;}
+.p-overlay{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#0a0a0a;z-index:10;padding:22px;text-align:center;}
+.p-spin{width:36px;height:36px;border-radius:50%;border:2px solid rgba(255,255,255,0.15);border-top-color:rgba(255,255,255,0.8);animation:spin 0.8s linear infinite;margin-bottom:11px;}
+.p-txt{font-size:0.82rem;color:rgba(255,255,255,0.5);}
+.p-h{font-size:0.95rem;font-weight:500;color:white;margin:9px 0 5px;}
+.p-sub{font-size:0.79rem;color:rgba(255,255,255,0.4);margin-bottom:13px;}
+.q-strip{display:flex;align-items:center;gap:7px;padding:8px 14px;background:#111;border-top:1px solid #222;flex-shrink:0;flex-wrap:wrap;}
+.q-strip span{font-size:0.7rem;color:rgba(255,255,255,0.4);}
+.q-btn{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);padding:3px 11px;border-radius:100px;font-family:'DM Sans',sans-serif;font-weight:500;font-size:0.72rem;cursor:pointer;transition:all 0.2s;}
+.q-btn:hover,.q-btn.active{background:white;border-color:white;color:#000;}
+
+/* Security */
+#secOverlay{display:none;position:fixed;inset:0;background:var(--bg);z-index:9999;align-items:center;justify-content:center;flex-direction:column;gap:14px;}
+#secOverlay.show{display:flex;}
+</style>
+</head>
+<body>
+
+<div id="secOverlay">
+  <div style="font-size:1.8rem;">🔒</div>
+  <div style="font-family:'Instrument Serif',serif;font-size:1.3rem;">Access Restricted</div>
+  <div style="font-size:0.83rem;color:var(--ts);">Please close developer tools.</div>
+</div>
+
+<!-- LOGIN -->
+<div class="page active" id="loginPage">
+  <div class="login-wrap">
+    <div class="login-card">
+      <div class="login-logo">
+        <div style="font-size:1.8rem;">🎯</div>
+        <div class="login-logo-text">Study Squad</div>
+      </div>
+
+      <!-- Mobile step -->
+      <div id="stepMobile">
+        <div class="login-title">Welcome back</div>
+        <div class="login-sub">Enter your mobile number to continue</div>
+        <div class="inp-group">
+          <label class="inp-label">Mobile Number</label>
+          <div class="inp-wrap">
+            <span class="inp-pre">+91</span>
+            <input class="inp pl" type="tel" id="mobileInp" placeholder="10-digit number" maxlength="10" inputmode="numeric"/>
+          </div>
+        </div>
+        <div class="err-txt" id="mobileErr"></div>
+        <button class="btn-primary" id="sendBtn" onclick="sendOTP()">Send OTP</button>
+      </div>
+
+      <!-- Name step (new user) -->
+      <div id="stepName" style="display:none;">
+        <div class="login-title">What's your name?</div>
+        <div class="login-sub">Enter your name to continue</div>
+        <div class="inp-group">
+          <label class="inp-label">Full Name</label>
+          <input class="inp" type="text" id="nameInp" placeholder="Your name"/>
+        </div>
+        <div class="err-txt" id="nameErr"></div>
+        <button class="btn-primary" onclick="proceedToOTP()">Continue →</button>
+        <button class="btn-ghost" onclick="showStep('mobile')">← Change Number</button>
+      </div>
+
+      <!-- OTP step -->
+      <div id="stepOTP" style="display:none;">
+        <div class="login-title">Enter OTP</div>
+        <div class="login-sub" id="otpSub">Code sent to your number</div>
+        <div class="inp-group">
+          <label class="inp-label" style="text-align:center;display:block;">6-digit OTP</label>
+          <div class="otp-row">
+            <input class="otp-inp" type="tel" maxlength="1" inputmode="numeric" id="o1"/>
+            <input class="otp-inp" type="tel" maxlength="1" inputmode="numeric" id="o2"/>
+            <input class="otp-inp" type="tel" maxlength="1" inputmode="numeric" id="o3"/>
+            <input class="otp-inp" type="tel" maxlength="1" inputmode="numeric" id="o4"/>
+            <input class="otp-inp" type="tel" maxlength="1" inputmode="numeric" id="o5"/>
+            <input class="otp-inp" type="tel" maxlength="1" inputmode="numeric" id="o6"/>
+          </div>
+        </div>
+        <div class="err-txt" id="otpErr"></div>
+        <div class="ok-txt" id="otpOk"></div>
+        <button class="btn-primary" id="verifyBtn" onclick="verifyOTP()">Verify & Continue</button>
+        <div class="timer-txt" id="timerTxt">Resend in <span id="timerN">30</span>s</div>
+        <button class="btn-ghost" id="resendBtn" style="display:none;" onclick="sendOTP()">Resend OTP</button>
+        <button class="btn-ghost" onclick="showStep('mobile')">← Change Number</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LANDING -->
+<div class="page" id="landingPage">
+  <div class="wrap">
+    <div class="topbar">
+      <div class="topbar-logo">🎯 Study Squad</div>
+      <div class="user-chip" onclick="showProfile()">
+        <div class="u-avatar" id="uAvatar">?</div>
+        <div class="u-name" id="uName">Profile</div>
+      </div>
+    </div>
+    <div class="hero">
+      <div class="eyebrow">⚡ JEE & NEET 2026–28</div>
+      <h1 class="hero-title">Master <em>JEE</em> &<br/><em>NEET</em> with<br/>Study Squad</h1>
+      <p class="hero-sub">India's most comprehensive learning platform. Premium video lectures, live classes — completely free.</p>
+      <button class="hero-btn" onclick="document.querySelector('.batch-cards').scrollIntoView({behavior:'smooth'})">Explore Batches ↓</button>
+    </div>
+    <div class="stats-row">
+      <div class="stat"><span class="stat-n">50k+</span><span class="stat-l">Students</span></div>
+      <div class="stat"><span class="stat-n">1000+</span><span class="stat-l">Lectures</span></div>
+      <div class="stat"><span class="stat-n">24/7</span><span class="stat-l">Access</span></div>
+    </div>
+    <div class="divider"><span>Choose Your Batch</span></div>
+    <div class="batch-cards">
+      <button class="bcard" onclick="openCourse('151','jee')">
+        <div class="bcard-img-ph" id="thumb151">Loading JEE batch...</div>
+        <div class="bcard-body">
+          <div class="tags" id="tags151"><span class="tag tag-jee">JEE 2028</span></div>
+          <div class="bcard-title" id="btitle151">Drona JEE — Class 11th</div>
+          <div class="bcard-sub">Physics, Chemistry & Mathematics</div>
+          <div class="bcard-foot">
+            <div class="price-row" id="bprice151"><span class="price-offer">₹4,999</span></div>
+            <span class="btn-sm">Start →</span>
+          </div>
+        </div>
+      </button>
+      <button class="bcard" onclick="openCourse('152','neet')">
+        <div class="bcard-img-ph" id="thumb152">Loading NEET batch...</div>
+        <div class="bcard-body">
+          <div class="tags" id="tags152"><span class="tag tag-neet">NEET 2028</span></div>
+          <div class="bcard-title" id="btitle152">Drona NEET — Class 11th</div>
+          <div class="bcard-sub">Physics, Chemistry & Biology</div>
+          <div class="bcard-foot">
+            <div class="price-row" id="bprice152"><span class="price-offer">₹4,999</span></div>
+            <span class="btn-sm">Start →</span>
+          </div>
+        </div>
+      </button>
+    </div>
+    <div class="landing-footer">Study Squad · Powered by Mission JEET</div>
+  </div>
+</div>
+
+<!-- COURSE PAGE -->
+<div class="page" id="coursePage">
+  <div class="cwrap">
+    <div class="back-row">
+      <button class="back-btn" id="cBack">← Back</button>
+      <span class="bc"><span class="bc-link" onclick="showPage('landingPage')">Home</span> › <span id="bcCur"></span></span>
+    </div>
+    <div id="cHero"><div class="chero-ph">Loading...</div></div>
+    <div class="tags" id="cTags" style="margin:12px 0 8px;"></div>
+    <div class="ctitle" id="cTitle"></div>
+    <div class="cmeta" id="cMeta"></div>
+    <div id="pkgCard"></div>
+    <div class="tabs">
+      <button class="tab active" id="tabOv" onclick="switchTab('ov')">Overview</button>
+      <button class="tab" id="tabCt" onclick="switchTab('ct')">Content</button>
+      <button class="tab" id="tabPkg" onclick="switchTab('pkg')" style="display:none;">📦 Bundle</button>
+      <button class="tab" id="tabLive" onclick="switchTab('live')">Live</button>
+    </div>
+
+    <!-- OVERVIEW -->
+    <div id="ovPane">
+      <div class="state" id="ovLoad"><div class="spinner"></div><p>Loading...</p></div>
+      <div id="ovBody" style="display:none;"></div>
+    </div>
+
+    <!-- CONTENT -->
+    <div id="ctPane" style="display:none;">
+      <div id="fBc" style="font-size:0.8rem;color:var(--tm);margin-bottom:16px;display:none;"></div>
+      <div class="state" id="ctLoad"><div class="spinner"></div><p>Fetching content...</p></div>
+      <div class="state" id="ctErr" style="display:none;"><h3>Error</h3><p id="ctErrMsg"></p><button class="retry" onclick="loadContent()">Retry</button></div>
+      <div id="ctData" style="display:none;">
+        <div id="liveInContent" style="display:none;">
+          <div class="sec-head" style="margin-bottom:12px;"><div class="sec-title">🔴 Live Now</div></div>
+          <div id="liveInContentCards" style="margin-bottom:20px;"></div>
+        </div>
+        <div id="foldersSection" style="display:none;">
+          <div class="sec-head"><div class="sec-title">Folders</div><div class="sec-cnt" id="fCnt"></div></div>
+          <div class="folders-list" id="foldersList"></div>
+        </div>
+        <div id="videosSection" style="display:none;">
+          <div class="sec-head" style="margin-top:20px;"><div class="sec-title">Videos</div><div class="sec-cnt" id="vCnt"></div></div>
+          <div class="videos-list" id="videosList"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LIVE -->
+    <div id="livePane" style="display:none;">
+      <div class="state" id="liveLoad"><div class="spinner"></div><p>Loading live classes...</p></div>
+      <div id="liveData" style="display:none;">
+        <!-- Live Now -->
+        <div id="liveNowSection" style="display:none;">
+          <div class="sec-head" style="margin-bottom:12px;"><div class="sec-title">🔴 Live Now</div></div>
+          <div id="liveNowCards" style="margin-bottom:20px;"></div>
+        </div>
+        <!-- Upcoming -->
+        <div id="upcomingSection" style="display:none;">
+          <div class="sec-head" style="margin-bottom:12px;"><div class="sec-title">📅 Upcoming</div></div>
+          <div id="upcomingCards" style="margin-bottom:20px;"></div>
+        </div>
+        <!-- No classes -->
+        <div id="noLive" style="display:none;">
+          <div class="state"><div style="font-size:2rem;margin-bottom:10px;">📡</div><h3>No Live Classes</h3><p>Check back at 4–8 PM for live sessions!</p></div>
+        </div>
+      </div>
+    </div>
+    <!-- PACKAGE TAB -->
+    <div id="pkgPane" style="display:none;">
+      <div class="state" id="pkgLoad"><div class="spinner"></div><p>Loading bundle content...</p></div>
+      <div class="state" id="pkgErr" style="display:none;"><h3>Error</h3><p id="pkgErrMsg"></p><button class="retry" onclick="loadPkgContent()">Retry</button></div>
+      <div id="pkgData" style="display:none;">
+        <div id="liveInPkg" style="display:none;">
+          <div class="sec-head" style="margin-bottom:12px;"><div class="sec-title">🔴 Live Now</div></div>
+          <div id="liveInPkgCards" style="margin-bottom:20px;"></div>
+        </div>
+        <div id="pkgFoldersSection" style="display:none;">
+          <div class="sec-head"><div class="sec-title">Folders</div><div class="sec-cnt" id="pkgFCnt"></div></div>
+          <div class="folders-list" id="pkgFoldersList"></div>
+        </div>
+        <div id="pkgVideosSection" style="display:none;">
+          <div class="sec-head" style="margin-top:20px;"><div class="sec-title">Videos</div><div class="sec-cnt" id="pkgVCnt"></div></div>
+          <div class="videos-list" id="pkgVideosList"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="page" id="playerPage">
+  <div class="p-nav">
+    <button class="p-back" id="pBack">←</button>
+    <div class="p-title" id="pTitle">Video</div>
+  </div>
+  <div class="p-main">
+    <div class="p-overlay" id="pLoad"><div class="p-spin"></div><div class="p-txt" id="pTxt">Loading...</div></div>
+    <div class="p-overlay" id="pErr" style="display:none;"><div style="font-size:2.2rem;margin-bottom:10px;">⚠️</div><div class="p-h">Couldn't load video</div><div class="p-sub" id="pErrMsg"></div><button class="retry" onclick="goBackPlayer()">← Back</button></div>
+    <video id="pvideo" playsinline controls></video>
+  </div>
+  <div class="q-strip" id="qStrip" style="display:none;"><span>Quality:</span><div id="qBtns" style="display:flex;gap:5px;flex-wrap:wrap;"></div></div>
+</div>
+
+<script>
+// ══ SECURITY ══
+document.addEventListener('contextmenu', e => e.preventDefault());
+document.addEventListener('keydown', e => {
+  if(e.key==='F12'||(e.ctrlKey&&e.shiftKey&&['I','J','C'].includes(e.key))||(e.ctrlKey&&['U','S'].includes(e.key))){e.preventDefault();return false;}
+});
+setInterval(()=>{
+  const t=160;
+  const open=window.outerWidth-window.innerWidth>t||window.outerHeight-window.innerHeight>t;
+  document.getElementById('secOverlay').classList.toggle('show',open);
+},600);
+
+// ══ CONFIG ══
+const PROXY="/api/proxy";
+const KEY="ss_auth";
+
+// ══ AUTH STATE ══
+let A={token:null,user:null};
+function saveAuth(token,user){A={token,user};try{localStorage.setItem(KEY,JSON.stringify(A));}catch(e){}}
+function loadAuth(){try{const d=localStorage.getItem(KEY);if(d)A=JSON.parse(d);}catch(e){}return !!(A.token&&A.user);}
+function getH(){const h={"Content-Type":"application/json"};if(A.token)h["X-User-Token"]=A.token;return h;}
+
+// ══ API ══
+async function api(action,params={}){
+  const q=new URLSearchParams({action,...params});
+  const r=await fetch(`${PROXY}?${q}`,{headers:getH()});
+  return r.json();
+}
+async function apiPost(action,body={}){
+  const r=await fetch(`${PROXY}?action=${action}`,{method:"POST",headers:getH(),body:JSON.stringify(body)});
+  return r.json();
+}
+
+// ══ PAGES ══
+function showPage(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  window.scrollTo(0,0);
+}
+
+// ══ LOGIN ══
+let otpTimer=null,curMobile="",curName="",isNewUser=false;
+
+function showStep(s){
+  ["stepMobile","stepName","stepOTP"].forEach(id=>{document.getElementById(id).style.display="none";});
+  const map={"mobile":"stepMobile","name":"stepName","otp":"stepOTP"};
+  const el=document.getElementById(map[s]);
+  if(el)el.style.display="block";
+  document.getElementById("mobileErr").textContent="";
+  document.getElementById("otpErr").textContent="";
+  document.getElementById("otpOk").textContent="";
+}
+
+async function sendOTP(){
+  const mobile=document.getElementById("mobileInp").value.trim();
+  if(!/^[6-9]\d{9}$/.test(mobile)){document.getElementById("mobileErr").textContent="Valid 10-digit number enter karo.";return;}
+  curMobile=mobile;
+  const btn=document.getElementById("sendBtn");
+  btn.disabled=true;btn.textContent="Sending...";
+  try{
+    const data=await apiPost("sendotp",{mobile});
+    btn.disabled=false;btn.textContent="Send OTP";
+    if(data.success){
+      isNewUser=data.data?.exists===false;
+      document.getElementById("otpSub").textContent="OTP sent to +91 "+mobile;
+      if(isNewUser){showStep("name");}
+      else{showStep("otp");setupOTP();startTimer();}
+    }else{
+      document.getElementById("mobileErr").textContent=data.message||data.error||"Failed. Try again.";
+    }
+  }catch(e){btn.disabled=false;btn.textContent="Send OTP";document.getElementById("mobileErr").textContent="Network error.";}
+}
+
+function proceedToOTP(){
+  const name=document.getElementById("nameInp").value.trim();
+  if(!name){document.getElementById("nameErr").textContent="Name required.";return;}
+  curName=name;
+  document.getElementById("otpSub").textContent=`Code sent to +91 ${curMobile}`;
+  showStep("otp");setupOTP();startTimer();
+}
+
+function setupOTP(){
+  const ins=["o1","o2","o3","o4","o5","o6"].map(id=>document.getElementById(id));
+  ins.forEach((inp,i)=>{
+    inp.value="";
+    inp.oninput=()=>{if(inp.value&&i<5)ins[i+1].focus();if(getOTP().length===6)verifyOTP();};
+    inp.onkeydown=e=>{if(e.key==="Backspace"&&!inp.value&&i>0)ins[i-1].focus();};
+  });
+  ins[0].focus();
+}
+function getOTP(){return["o1","o2","o3","o4","o5","o6"].map(id=>document.getElementById(id).value).join("");}
+
+function startTimer(){
+  let c=30;
+  document.getElementById("timerTxt").style.display="block";
+  document.getElementById("resendBtn").style.display="none";
+  document.getElementById("timerN").textContent=c;
+  if(otpTimer)clearInterval(otpTimer);
+  otpTimer=setInterval(()=>{
+    c--;document.getElementById("timerN").textContent=c;
+    if(c<=0){clearInterval(otpTimer);document.getElementById("timerTxt").style.display="none";document.getElementById("resendBtn").style.display="block";}
+  },1000);
+}
+
+async function verifyOTP(){
+  const otp=getOTP();if(otp.length!==6)return;
+  const btn=document.getElementById("verifyBtn");
+  btn.disabled=true;btn.textContent="Verifying...";
+  document.getElementById("otpErr").textContent="";
+  try{
+    const data=await apiPost("verifyotp",{mobile:curMobile,otp,name:curName});
+    btn.disabled=false;btn.textContent="Verify & Continue";
+    // Token is in _raw.data.accessToken
+    const tok=data.token||data._raw?.data?.accessToken||data.data?.accessToken||data.accessToken||null;
+    const rawUser=data._raw?.data||data.data||{};
+    const usr={mobile:curMobile,name:rawUser.name||curName||curMobile,id:rawUser.id};
+    if(tok){
+      saveAuth(tok,usr);
+      document.getElementById("otpOk").textContent="✓ Login successful!";
+      setTimeout(()=>{initLanding();showPage("landingPage");},700);
+    }else{
+      document.getElementById("otpErr").textContent=data.message||"Invalid OTP.";
+    }
+  }catch(e){btn.disabled=false;btn.textContent="Verify & Continue";document.getElementById("otpErr").textContent="Network error.";}
+}
+
+// ══ LANDING ══
+function initLanding(){
+  const name=A.user?.name||A.user?.displayName||curMobile||"User";
+  document.getElementById("uAvatar").textContent=name[0].toUpperCase();
+  document.getElementById("uName").textContent=name;
+  loadBatchCards();
+}
+
+function showProfile(){
+  if(confirm(`Logged in as: ${A.user?.mobile||curMobile}\nLogout?`)){
+    try{localStorage.removeItem(KEY);}catch(e){}
+    A={token:null,user:null};
+    showPage("loginPage");showStep("mobile");
+  }
+}
+
+async function loadBatchCards(){
+  // Load 151 and 152 via course-details
+  ["151","152"].forEach(async cid=>{
+    try{
+      const data=await api("course",{course_id:cid});
+      const d=data.data;if(!d)return;
+      // Thumbnail
+      const th=document.getElementById(`thumb${cid}`);
+      if(d.thumbnail||d.image){
+        const img=d.thumbnail||d.image;
+        th.outerHTML=`<img class="bcard-img" src="${img}" alt="${d.title}" onerror="this.style.display='none'"/>`;
+      }else{th.textContent=cid==="151"?"JEE Batch":"NEET Batch";}
+      // Title
+      document.getElementById(`btitle${cid}`).textContent=d.title||`Drona ${cid==="151"?"JEE":"NEET"}`;
+      // Tags
+      const tags=[cid==="151"?`<span class="tag tag-jee">JEE 2028</span>`:`<span class="tag tag-neet">NEET 2028</span>`];
+      if(d.is_new||d.isNew)tags.push(`<span class="tag tag-new">New</span>`);
+      if(d.is_trending||d.isTrending)tags.push(`<span class="tag tag-trend">Trending</span>`);
+      document.getElementById(`tags${cid}`).innerHTML=tags.join("");
+      // Price
+      if(d.offer_price||d.offerPrice){
+        const offer=parseFloat(d.offer_price||d.offerPrice).toLocaleString("en-IN");
+        const mrp=parseFloat(d.mrp||d.price||0).toLocaleString("en-IN");
+        const disc=d.discount_percentage||d.discountPercentage||0;
+        document.getElementById(`bprice${cid}`).innerHTML=`<span class="price-offer">₹${offer}</span><span class="price-mrp">₹${mrp}</span><span class="price-disc">${Math.round(disc)}% off</span>`;
+      }
+    }catch(e){}
+  });
+}
+
+// ══ COURSE STATE ══
+let S={id:null,type:"jee",folderId:null,folderTitle:"",tab:"ov",ovLoaded:false,ctLoaded:false,liveLoaded:false,stack:[],hls:null};
+
+function openCourse(id, type, parentCourseId){
+  S={id:String(id),type:type||"jee",parentCourseId:parentCourseId||null,folderId:null,folderTitle:"",tab:"ov",ovLoaded:false,ctLoaded:false,liveLoaded:false,pkgLoaded:false,pkgId:null,stack:[],hls:null};
+  document.getElementById("cBack").onclick=parentCourseId?()=>showPage("landingPage"):()=>showPage("landingPage");
+  document.getElementById("bcCur").textContent=type==="pcmb"?"PCMB Bundle":type==="jee"?"Drona JEE":"Drona NEET";
+  document.getElementById("cHero").innerHTML=`<div class="chero-ph">Loading...</div>`;
+  document.getElementById("cTitle").textContent="";
+  document.getElementById("cMeta").textContent="";
+  document.getElementById("cTags").innerHTML="";
+  document.getElementById("pkgCard").innerHTML="";
+  document.getElementById("tabPkg").style.display="none";
+  switchTab("ov");showPage("coursePage");
+  loadOverview();
+}
+
+function switchTab(tab){
+  S.tab=tab;
+  ["Ov","Ct","Pkg","Live"].forEach(t=>{
+    const tabEl=document.getElementById("tab"+t);
+    const paneEl=document.getElementById(t.toLowerCase()+"Pane");
+    if(tabEl)tabEl.classList.toggle("active",tab===t.toLowerCase());
+    if(paneEl)paneEl.style.display=tab===t.toLowerCase()?"block":"none";
+  });
+  if(tab==="ct"&&!S.ctLoaded)loadContent();
+  if(tab==="live"&&!S.liveLoaded)loadLive();
+  if(tab==="pkg"&&!S.pkgLoaded)loadPkgContent();
+}
+
+// ══ OVERVIEW ══
+async function loadOverview(){
+  if(S.ovLoaded)return;S.ovLoaded=true;
+  document.getElementById("ovLoad").style.display="block";
+  document.getElementById("ovBody").style.display="none";
+  try{
+    const data=await api("course",{course_id:S.id});
+    const sections=data.data||[];
+    const ovSection=sections.find(s=>s.type==="overview");
+    const det=ovSection?.data?.find(d=>d.layout_type==="details")?.layout_data?.[0];
+    const pkgs=ovSection?.data?.find(d=>d.layout_type==="packages")?.layout_data||[];
+    if(!det)throw new Error("Overview data not found");
+    if(det.thumbnail){document.getElementById("cHero").innerHTML=`<img class="chero-img" src="${det.thumbnail}" alt="${det.title}" onerror="this.parentElement.innerHTML='<div class=\'chero-ph\'>📚</div>'">`;}
+    document.getElementById("cTitle").textContent=det.title||"Course";
+    if(det.offer_price){
+      const offer=parseFloat(det.offer_price).toLocaleString("en-IN");
+      const mrp=parseFloat(det.mrp||0).toLocaleString("en-IN");
+      const disc=Math.round(det.discount_percentage||0);
+      document.getElementById("cMeta").innerHTML=`<span style="font-size:1rem;font-weight:600;">&#8377;${offer}</span> <span style="color:var(--tm);text-decoration:line-through;font-size:0.85rem;">&#8377;${mrp}</span> <span style="color:var(--green);font-size:0.78rem;font-weight:600;">${disc}% off</span>`;
+    }
+    const tags=[S.type==="jee"?'<span class="tag tag-jee">JEE 2028</span>':'<span class="tag tag-neet">NEET 2028</span>'];
+    if(det.is_new)tags.push('<span class="tag tag-new">New</span>');
+    if(det.is_trending)tags.push('<span class="tag tag-trend">Trending</span>');
+    document.getElementById("cTags").innerHTML=tags.join("");
+    if(pkgs.length){
+      const pkg=pkgs[0];
+      S.pkgId=String(pkg.id);
+      S.pkgLoaded=false;
+      document.getElementById("pkgCard").innerHTML='<div class="pkg-card" style="cursor:pointer" onclick="openCourse(\''+pkg.id+'\',\'pcmb\',\''+S.id+'\')"><img class="pkg-img" src="'+(pkg.thumbnail||"")+'" onerror="this.style.display=\'none\'"/><div style="flex:1"><div class="pkg-lbl">📦 Free Bundle — Tap to Open</div><div class="pkg-title">'+(pkg.title||"")+'</div></div><div style="padding:0 12px;color:var(--tm)">›</div></div>';
+    }
+    document.getElementById("ovBody").innerHTML='<div class="ov-desc">'+(det.description||"")+"</div>";
+    document.getElementById("ovLoad").style.display="none";
+    document.getElementById("ovBody").style.display="block";
+  }catch(e){
+    document.getElementById("ovLoad").innerHTML="<h3>Error</h3><p>"+e.message+"</p>";
+  }
+}
+
+async function loadLive(){
+  S.liveLoaded=true;
+  document.getElementById("liveLoad").style.display="block";
+  document.getElementById("liveData").style.display="none";
+  try{
+    const [liveData,upData]=await Promise.all([
+      api("live",{course_id:S.id}),
+      api("upcoming",{course_id:S.id})
+    ]);
+    const lives=liveData.data||[];
+    const upcoming=upData.data||[];
+
+    document.getElementById("liveLoad").style.display="none";
+    document.getElementById("liveData").style.display="block";
+
+    if(!lives.length&&!upcoming.length){
+      document.getElementById("noLive").style.display="block";
+      document.getElementById("liveNowSection").style.display="none";
+      document.getElementById("upcomingSection").style.display="none";
+      return;
+    }
+    document.getElementById("noLive").style.display="none";
+
+    // Live now
+    if(lives.length){
+      document.getElementById("liveNowSection").style.display="block";
+      document.getElementById("liveNowCards").innerHTML="";
+      lives.forEach(l=>{
+        const btn=document.createElement("button");
+        btn.className="live-card";
+        btn.innerHTML=`<div class="live-dot"></div><div class="live-lbl">LIVE</div><div class="live-name">${l.title||l.name}</div><button class="join-btn">Join →</button>`;
+        btn.onclick=()=>openVideo(l);
+        document.getElementById("liveNowCards").appendChild(btn);
+      });
+    }else{document.getElementById("liveNowSection").style.display="none";}
+
+    // Upcoming
+    if(upcoming.length){
+      document.getElementById("upcomingSection").style.display="block";
+      document.getElementById("upcomingCards").innerHTML="";
+      upcoming.forEach(u=>{
+        const div=document.createElement("div");
+        div.className="up-card";
+        const time=u.start_date||u.startDate||u.start_time||u.startTime;
+        const timeStr=time?new Date(Number(time)*1000||time).toLocaleString("en-IN",{dateStyle:"medium",timeStyle:"short"}):"Soon";
+        div.innerHTML=`<div class="up-icon">📅</div><div class="up-info"><div class="up-name">${u.title||u.name}</div><div class="up-meta">${timeStr}</div></div>`;
+        document.getElementById("upcomingCards").appendChild(div);
+      });
+    }else{document.getElementById("upcomingSection").style.display="none";}
+  }catch(e){
+    document.getElementById("liveLoad").innerHTML=`<h3>Error</h3><p>${e.message}</p>`;
+  }
+}
+
+async function loadPkgContent(){
+  S.pkgLoaded=true;
+  document.getElementById("pkgLoad").style.display="block";
+  document.getElementById("pkgErr").style.display="none";
+  document.getElementById("pkgData").style.display="none";
+  try{
+    const data=await api("content",{course_id:S.pkgId,parent_course_id:S.id});
+    const items=data.data||[];
+    const folders=items.filter(i=>i.type==="folder");
+    const videos=items.filter(i=>i.type==="file"&&Number(i.data?.file_type)===2&&i.data?.vdc_id);
+    const lives=items.filter(i=>i.data?.is_live===1);
+
+    // Live
+    const liveSec=document.getElementById("liveInPkg");
+    const liveCards=document.getElementById("liveInPkgCards");
+    if(lives.length){
+      liveSec.style.display="block";liveCards.innerHTML="";
+      lives.forEach(l=>{
+        const btn=document.createElement("button");
+        btn.className="live-card";
+        btn.innerHTML=`<div class="live-dot"></div><div class="live-lbl">LIVE</div><div class="live-name">${l.title}</div><span class="join-btn">Join →</span>`;
+        btn.onclick=()=>openVideo(l);
+        liveCards.appendChild(btn);
+      });
+    }else{liveSec.style.display="none";}
+
+    // Folders
+    const fSec=document.getElementById("pkgFoldersSection");
+    const fList=document.getElementById("pkgFoldersList");
+    if(folders.length){
+      fSec.style.display="block";
+      document.getElementById("pkgFCnt").textContent=folders.length;
+      fList.innerHTML="";
+      folders.forEach(f=>{
+        const btn=document.createElement("button");
+        btn.className="folder-card";
+        const th=f.data?.thumbnail;
+        const vc=f.data?.content_counts;
+        const vids=(vc?.video?.paid||0)+(vc?.video?.free||0);
+        const folds=vc?.folders?.total||0;
+        const meta=[folds?`${folds} folders`:"",vids?`${vids} videos`:""].filter(Boolean).join(" · ")||"Tap to open";
+        btn.innerHTML=`${th?`<img class="f-img" src="${th}" onerror="this.outerHTML='<div class=\\'f-ph\\'>📁</div>'">`:`<div class="f-ph">📁</div>`}
+          <div class="f-body"><div class="f-name">${f.title}</div><div class="f-meta">${meta}</div></div>
+          <div class="f-arr">›</div>`;
+        btn.onclick=()=>{
+          // Open folder inside pkg
+          S.stack.push({id:S.folderId,title:S.folderTitle,courseId:S.id});
+          S.folderId=f.entity_id||f.data?.id;
+          S.folderTitle=f.title;
+          S.id=S.pkgId;
+          S.ctLoaded=false;
+          switchTab("ct");
+          loadContent();
+        };
+        fList.appendChild(btn);
+      });
+    }else{fSec.style.display="none";}
+
+    // Videos
+    const vSec=document.getElementById("pkgVideosSection");
+    const vList=document.getElementById("pkgVideosList");
+    if(videos.length){
+      vSec.style.display="block";
+      document.getElementById("pkgVCnt").textContent=videos.length;
+      vList.innerHTML="";
+      videos.forEach(v=>{
+        const btn=document.createElement("button");
+        btn.className="v-card";
+        const th=v.data?.thumbnail;
+        const dur=v.data?.duration;
+        btn.innerHTML=`${th?`<img class="v-thumb" src="${th}" onerror="this.outerHTML='<div class=\\'v-play\\'>▶</div>'">`:`<div class="v-play">▶</div>`}
+          <div class="v-body"><div class="v-name">${v.title}</div><div class="v-meta">${dur?formatDur(dur)+" · ":""}Video</div></div>
+          <span class="hd-badge">HD</span>`;
+        btn.onclick=()=>openVideo(v);
+        vList.appendChild(btn);
+      });
+    }else{vSec.style.display="none";}
+
+    if(!lives.length&&!folders.length&&!videos.length){
+      document.getElementById("pkgLoad").style.display="none";
+      document.getElementById("pkgErr").style.display="block";
+      document.getElementById("pkgErrMsg").textContent="No content found.";
+      return;
+    }
+    document.getElementById("pkgLoad").style.display="none";
+    document.getElementById("pkgData").style.display="block";
+  }catch(e){
+    document.getElementById("pkgLoad").style.display="none";
+    document.getElementById("pkgErr").style.display="block";
+    document.getElementById("pkgErrMsg").textContent=e.message;
+  }
+}
+
+// ══ PLAYER ══
+async function openVideo(v){
+  showPage("playerPage");
+  document.getElementById("pTitle").textContent=v.title||v.name||"Video";
+  document.getElementById("pLoad").style.display="flex";
+  document.getElementById("pErr").style.display="none";
+  document.getElementById("qStrip").style.display="none";
+  document.getElementById("pTxt").textContent="Loading...";
+  document.getElementById("pBack").onclick=goBackPlayer;
+  destroyHLS();
+  try{
+    const contentId=v.entity_id||v.data?.id||v.id;
+    const vdcId=v.data?.vdc_id||v.vdc_id;
+    let m3u8=null;
+
+    // Step 1: Get video details from proxy (has file_url with direct m3u8)
+    document.getElementById("pTxt").textContent="Fetching stream...";
+    try{
+      const tok=JSON.parse(localStorage.getItem("ss_auth")||"{}").token;
+      const headers={"Content-Type":"application/json"};
+      if(tok&&!tok.startsWith("verified_"))headers["X-User-Token"]=tok;
+      const det=await fetch(PROXY+"?action=video&content_id="+contentId+"&course_id="+S.id,{headers}).then(r=>r.json());
+      const d=det.data||{};
+      // file_url has the direct m3u8 URL
+      m3u8=d.file_url||d.hls_url||d.hlsUrl||d.stream_url||null;
+      if(m3u8&&!m3u8.includes(".m3u8"))m3u8=null;
+      if(!m3u8&&(d.vdc_id||vdcId))m3u8=buildM3u8(d.vdc_id||vdcId);
+    }catch(e){}
+
+    // Step 2: Fallback - build from vdc_id
+    if(!m3u8&&vdcId)m3u8=buildM3u8(vdcId);
+    if(!m3u8)throw new Error("Stream URL not found.");
+
+    document.getElementById("pTxt").textContent="Starting player...";
+    initHLS(m3u8);
+  }catch(e){
+    document.getElementById("pLoad").style.display="none";
+    document.getElementById("pErr").style.display="flex";
+    document.getElementById("pErrMsg").textContent=e.message;
+  }
+}
+
+function buildM3u8(vdcId){
+  const p=vdcId.split("_");
+  return`https://d1ji5qpleqhfrc.cloudfront.net/file_library/videos/channel_vod_non_drm_hls/${p[0]}/${vdcId}/${vdcId}_8953428.m3u8`;
+}
+
+function initHLS(url){
+  const video=document.getElementById("pvideo");
+  destroyHLS();
+  if(Hls.isSupported()){
+    const hls=new Hls({maxBufferLength:30,maxMaxBufferLength:60});
+    S.hls=hls;hls.loadSource(url);hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED,(e,d)=>{
+      document.getElementById("pLoad").style.display="none";
+      renderQ(d.levels||[]);video.play().catch(()=>{});
+    });
+    hls.on(Hls.Events.ERROR,(e,d)=>{
+      if(d.fatal){document.getElementById("pLoad").style.display="none";document.getElementById("pErr").style.display="flex";document.getElementById("pErrMsg").textContent=d.details||"Stream error";}
+    });
+  }else if(video.canPlayType("application/vnd.apple.mpegurl")){
+    video.src=url;
+    video.addEventListener("loadedmetadata",()=>{document.getElementById("pLoad").style.display="none";video.play();},{once:true});
+  }else{
+    document.getElementById("pLoad").style.display="none";document.getElementById("pErr").style.display="flex";document.getElementById("pErrMsg").textContent="Browser HLS support nahi karta.";
+  }
+}
+
+function renderQ(levels){
+  if(!levels.length)return;
+  document.getElementById("qStrip").style.display="flex";
+  const btns=document.getElementById("qBtns");btns.innerHTML="";
+  levels.forEach((q,i)=>{
+    const btn=document.createElement("button");
+    btn.className="q-btn"+(i===0?" active":"");
+    btn.textContent=q.height?q.height+"p":`Q${i+1}`;
+    btn.onclick=()=>{if(S.hls)S.hls.currentLevel=i;document.querySelectorAll(".q-btn").forEach((b,j)=>b.classList.toggle("active",j===i));};
+    btns.appendChild(btn);
+  });
+}
+
+function destroyHLS(){
+  if(S.hls){try{S.hls.destroy();}catch(e){}S.hls=null;}
+  const v=document.getElementById("pvideo");v.pause();v.src="";v.load();
+}
+
+function goBackPlayer(){destroyHLS();showPage("coursePage");if(S.tab!=="ct")switchTab("ct");}
+
+function renderLiveInContent(lives){
+  const sec=document.getElementById("liveInContent");
+  if(!sec)return;
+  if(!lives.length){sec.style.display="none";return;}
+  sec.style.display="block";
+  const cards=document.getElementById("liveInContentCards");
+  cards.innerHTML="";
+  lives.forEach(l=>{
+    const btn=document.createElement("button");
+    btn.className="live-card";
+    btn.innerHTML=`<div class="live-dot"></div><div class="live-lbl">LIVE</div><div class="live-name">${l.title||l.name}</div><span class="join-btn">Join →</span>`;
+    btn.onclick=()=>openVideo(l);
+    cards.appendChild(btn);
+  });
+}
+
+function renderFolders(folders){
+  const sec=document.getElementById("foldersSection");
+  const list=document.getElementById("foldersList");
+  if(!folders.length){sec.style.display="none";return;}
+  sec.style.display="block";
+  document.getElementById("fCnt").textContent=folders.length;
+  list.innerHTML="";
+  folders.forEach(f=>{
+    const btn=document.createElement("button");
+    btn.className="folder-card";
+    const th=f.data?.thumbnail;
+    const vc=f.data?.content_counts;
+    const vids=(vc?.video?.paid||0)+(vc?.video?.free||0);
+    const folds=vc?.folders?.total||0;
+    const meta=[folds?`${folds} folders`:"",vids?`${vids} videos`:""].filter(Boolean).join(" · ")||"Tap to open";
+    btn.innerHTML=`${th?`<img class="f-img" src="${th}" onerror="this.outerHTML='<div class=\\'f-ph\\'>📁</div>'">`:`<div class="f-ph">📁</div>`}
+      <div class="f-body"><div class="f-name">${f.title||f.name}</div><div class="f-meta">${meta}</div></div>
+      <div class="f-arr">›</div>`;
+    btn.onclick=()=>{
+      S.stack.push({id:S.folderId,title:S.folderTitle});
+      S.folderId=f.entity_id||f.data?.id||f.id;
+      S.folderTitle=f.title||f.name;
+      S.ctLoaded=false;
+      updateFBc();loadContent();
+    };
+    list.appendChild(btn);
+  });
+}
+
+function renderVideos(videos){
+  const sec=document.getElementById("videosSection");
+  const list=document.getElementById("videosList");
+  if(!videos.length){sec.style.display="none";return;}
+  sec.style.display="block";
+  document.getElementById("vCnt").textContent=videos.length;
+  list.innerHTML="";
+  videos.forEach(v=>{
+    const btn=document.createElement("button");
+    btn.className="v-card";
+    const th=v.data?.thumbnail||v.thumbnail;
+    const dur=v.data?.duration||v.duration;
+    btn.innerHTML=`${th?`<img class="v-thumb" src="${th}" onerror="this.outerHTML='<div class=\\'v-play\\'>▶</div>'">`:`<div class="v-play">▶</div>`}
+      <div class="v-body"><div class="v-name">${v.title||v.name}</div><div class="v-meta">${dur?formatDur(dur)+" · ":""}Video</div></div>
+      <span class="hd-badge">HD</span>`;
+    btn.onclick=()=>openVideo(v);
+    list.appendChild(btn);
+  });
+}
+
+function formatDur(s){if(!s)return"";return`${Math.floor(s/60)}:${(s%60).toString().padStart(2,"0")}`;}
+
+function ctShow(w){
+  document.getElementById("ctLoad").style.display=w==="load"?"block":"none";
+  document.getElementById("ctErr").style.display=w==="err"?"block":"none";
+  document.getElementById("ctData").style.display=w==="data"?"block":"none";
+}
+
+async function loadContent(){
+  S.ctLoaded=true;
+  ctShow("load");
+  document.getElementById("liveInContent").style.display="none";
+  updateFBc();
+  try{
+    const params={course_id:S.id};
+    if(S.folderId)params.folder_id=S.folderId;
+    if(S.parentCourseId)params.parent_course_id=S.parentCourseId;
+    const data=await api("content",params);
+    const items=data.data||[];
+    const lives=items.filter(i=>i.data?.is_live===1);
+    const folders=items.filter(i=>i.type==="folder");
+    const videos=items.filter(i=>i.type==="file"&&Number(i.data?.file_type)===2&&i.data?.vdc_id);
+    renderLiveInContent(lives);
+    renderFolders(folders);
+    renderVideos(videos);
+    if(!lives.length&&!folders.length&&!videos.length){
+      ctShow("err");
+      document.getElementById("ctErrMsg").textContent="No content found.";
+      return;
+    }
+    ctShow("data");
+  }catch(e){
+    ctShow("err");
+    document.getElementById("ctErrMsg").textContent=e.message;
+  }
+}
+
+// ══ PACKAGE ══
+function openPackage(pkgId, parentId){
+  S={...S, id:pkgId, folderId:null, folderTitle:"", ctLoaded:false, stack:[], pkgParentId:parentId};
+  document.getElementById("bcCur").textContent="Package Course";
+  document.getElementById("cBack").onclick=()=>{
+    S.id=parentId;S.pkgParentId=null;
+    openCourse(parentId, S.type);
+  };
+  switchTab("ct");
+  // Load package content with parent_course_id
+  loadPackageContent(pkgId, parentId);
+}
+
+async function loadPackageContent(pkgId, parentId){
+  ctShow("load");
+  try{
+    const tok=JSON.parse(localStorage.getItem("ss_auth")||"{}").token;
+    const headers={"Content-Type":"application/json"};
+    if(tok&&!tok.startsWith("verified_"))headers["X-User-Token"]=tok;
+    const r=await fetch(PROXY+"?action=content&course_id="+pkgId+"&parent_course_id="+parentId,{headers});
+    const data=await r.json();
+    const items=data.data||[];
+    const folders=items.filter(i=>i.type==="folder");
+    const videos=items.filter(i=>i.type==="file"&&Number(i.data?.file_type)===2&&i.data?.vdc_id);
+    const lives=items.filter(i=>i.data?.is_live===1);
+    renderLiveInContent(lives);
+    renderFolders(folders);
+    renderVideos(videos);
+    if(!lives.length&&!folders.length&&!videos.length){ctShow("err");document.getElementById("ctErrMsg").textContent="No content found.";return;}
+    ctShow("data");
+  }catch(e){ctShow("err");document.getElementById("ctErrMsg").textContent=e.message;}
+}
+
+// ══ INIT ══
+(function(){
+  if(loadAuth()){initLanding();showPage("landingPage");}
+  else{showPage("loginPage");showStep("mobile");}
+})();
+</script>
+</body>
+</html>
