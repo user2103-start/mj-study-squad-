@@ -343,6 +343,7 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tp);min-h
     <div class="tabs">
       <button class="tab active" id="tabOv" onclick="switchTab('ov')">Overview</button>
       <button class="tab" id="tabCt" onclick="switchTab('ct')">Content</button>
+      <button class="tab" id="tabPkg" onclick="switchTab('pkg')" style="display:none;">📦 Bundle</button>
       <button class="tab" id="tabLive" onclick="switchTab('live')">Live</button>
     </div>
 
@@ -393,10 +394,27 @@ body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--tp);min-h
         </div>
       </div>
     </div>
+    <!-- PACKAGE TAB -->
+    <div id="pkgPane" style="display:none;">
+      <div class="state" id="pkgLoad"><div class="spinner"></div><p>Loading bundle content...</p></div>
+      <div class="state" id="pkgErr" style="display:none;"><h3>Error</h3><p id="pkgErrMsg"></p><button class="retry" onclick="loadPkgContent()">Retry</button></div>
+      <div id="pkgData" style="display:none;">
+        <div id="liveInPkg" style="display:none;">
+          <div class="sec-head" style="margin-bottom:12px;"><div class="sec-title">🔴 Live Now</div></div>
+          <div id="liveInPkgCards" style="margin-bottom:20px;"></div>
+        </div>
+        <div id="pkgFoldersSection" style="display:none;">
+          <div class="sec-head"><div class="sec-title">Folders</div><div class="sec-cnt" id="pkgFCnt"></div></div>
+          <div class="folders-list" id="pkgFoldersList"></div>
+        </div>
+        <div id="pkgVideosSection" style="display:none;">
+          <div class="sec-head" style="margin-top:20px;"><div class="sec-title">Videos</div><div class="sec-cnt" id="pkgVCnt"></div></div>
+          <div class="videos-list" id="pkgVideosList"></div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
-
-<!-- PLAYER -->
 <div class="page" id="playerPage">
   <div class="p-nav">
     <button class="p-back" id="pBack">←</button>
@@ -586,7 +604,7 @@ async function loadBatchCards(){
 let S={id:null,type:"jee",folderId:null,folderTitle:"",tab:"ov",ovLoaded:false,ctLoaded:false,liveLoaded:false,stack:[],hls:null};
 
 function openCourse(id,type){
-  S={id,type,folderId:null,folderTitle:"",tab:"ov",ovLoaded:false,ctLoaded:false,liveLoaded:false,stack:[],hls:null};
+  S={id,type,folderId:null,folderTitle:"",tab:"ov",ovLoaded:false,ctLoaded:false,liveLoaded:false,pkgLoaded:false,pkgId:null,stack:[],hls:null};
   document.getElementById("cBack").onclick=()=>showPage("landingPage");
   document.getElementById("bcCur").textContent=type==="jee"?"Drona JEE":"Drona NEET";
   document.getElementById("cHero").innerHTML=`<div class="chero-ph">Loading...</div>`;
@@ -600,12 +618,15 @@ function openCourse(id,type){
 
 function switchTab(tab){
   S.tab=tab;
-  ["Ov","Ct","Live"].forEach(t=>{
-    document.getElementById("tab"+t).classList.toggle("active",tab===t.toLowerCase());
-    document.getElementById(t.toLowerCase()+"Pane").style.display=tab===t.toLowerCase()?"block":"none";
+  ["Ov","Ct","Pkg","Live"].forEach(t=>{
+    const tabEl=document.getElementById("tab"+t);
+    const paneEl=document.getElementById(t.toLowerCase()+"Pane");
+    if(tabEl)tabEl.classList.toggle("active",tab===t.toLowerCase());
+    if(paneEl)paneEl.style.display=tab===t.toLowerCase()?"block":"none";
   });
   if(tab==="ct"&&!S.ctLoaded)loadContent();
   if(tab==="live"&&!S.liveLoaded)loadLive();
+  if(tab==="pkg"&&!S.pkgLoaded)loadPkgContent();
 }
 
 // ══ OVERVIEW ══
@@ -634,15 +655,20 @@ async function loadOverview(){
     document.getElementById("cTags").innerHTML=tags.join("");
     if(pkgs.length){
       const pkg=pkgs[0];
-      const pkgId=pkg.id;const parentId=S.id;
-      document.getElementById("pkgCard").innerHTML='<div class="pkg-card" style="cursor:pointer" onclick="openPackage('+pkgId+',\''+parentId+'\')"><img class="pkg-img" src="'+(pkg.thumbnail||"")+'" onerror="this.style.display=\'none\'"/><div style="flex:1"><div class="pkg-lbl">&#128230; Bundled — Tap to Open</div><div class="pkg-title">'+(pkg.title||"")+'</div></div><div style="padding:0 12px;color:var(--tm)">&#8250;</div></div>';
+      S.pkgId=String(pkg.id);
+      S.pkgLoaded=false;
+      // Show bundle tab
+      document.getElementById("tabPkg").style.display="block";
+      document.getElementById("tabPkg").textContent="📦 "+( pkg.title||"Bundle");
+      // Also show small info card
+      document.getElementById("pkgCard").innerHTML='<div class="pkg-card" style="cursor:pointer" onclick="switchTab(\'pkg\')"><img class="pkg-img" src="'+(pkg.thumbnail||"")+'" onerror="this.style.display=\'none\'"/><div style="flex:1"><div class="pkg-lbl">&#128230; Bundled Free</div><div class="pkg-title">'+(pkg.title||"")+'</div></div><div style="padding:0 12px;color:var(--tm)">&#8250;</div></div>';
     }
     document.getElementById("ovBody").innerHTML='<div class="ov-desc">'+(det.description||"")+"</div>";
     document.getElementById("ovLoad").style.display="none";
     document.getElementById("ovBody").style.display="block";
   }catch(e){
     document.getElementById("ovLoad").innerHTML="<h3>Error</h3><p>"+e.message+"</p>";
-  }
+    }
 }
 
 async function loadLive(){
@@ -696,6 +722,99 @@ async function loadLive(){
     }else{document.getElementById("upcomingSection").style.display="none";}
   }catch(e){
     document.getElementById("liveLoad").innerHTML=`<h3>Error</h3><p>${e.message}</p>`;
+  }
+}
+
+async function loadPkgContent(){
+  S.pkgLoaded=true;
+  document.getElementById("pkgLoad").style.display="block";
+  document.getElementById("pkgErr").style.display="none";
+  document.getElementById("pkgData").style.display="none";
+  try{
+    const data=await api("content",{course_id:S.pkgId,parent_course_id:S.id});
+    const items=data.data||[];
+    const folders=items.filter(i=>i.type==="folder");
+    const videos=items.filter(i=>i.type==="file"&&Number(i.data?.file_type)===2&&i.data?.vdc_id);
+    const lives=items.filter(i=>i.data?.is_live===1);
+
+    // Live
+    const liveSec=document.getElementById("liveInPkg");
+    const liveCards=document.getElementById("liveInPkgCards");
+    if(lives.length){
+      liveSec.style.display="block";liveCards.innerHTML="";
+      lives.forEach(l=>{
+        const btn=document.createElement("button");
+        btn.className="live-card";
+        btn.innerHTML=`<div class="live-dot"></div><div class="live-lbl">LIVE</div><div class="live-name">${l.title}</div><span class="join-btn">Join →</span>`;
+        btn.onclick=()=>openVideo(l);
+        liveCards.appendChild(btn);
+      });
+    }else{liveSec.style.display="none";}
+
+    // Folders
+    const fSec=document.getElementById("pkgFoldersSection");
+    const fList=document.getElementById("pkgFoldersList");
+    if(folders.length){
+      fSec.style.display="block";
+      document.getElementById("pkgFCnt").textContent=folders.length;
+      fList.innerHTML="";
+      folders.forEach(f=>{
+        const btn=document.createElement("button");
+        btn.className="folder-card";
+        const th=f.data?.thumbnail;
+        const vc=f.data?.content_counts;
+        const vids=(vc?.video?.paid||0)+(vc?.video?.free||0);
+        const folds=vc?.folders?.total||0;
+        const meta=[folds?`${folds} folders`:"",vids?`${vids} videos`:""].filter(Boolean).join(" · ")||"Tap to open";
+        btn.innerHTML=`${th?`<img class="f-img" src="${th}" onerror="this.outerHTML='<div class=\\'f-ph\\'>📁</div>'">`:`<div class="f-ph">📁</div>`}
+          <div class="f-body"><div class="f-name">${f.title}</div><div class="f-meta">${meta}</div></div>
+          <div class="f-arr">›</div>`;
+        btn.onclick=()=>{
+          // Open folder inside pkg
+          S.stack.push({id:S.folderId,title:S.folderTitle,courseId:S.id});
+          S.folderId=f.entity_id||f.data?.id;
+          S.folderTitle=f.title;
+          S.id=S.pkgId;
+          S.ctLoaded=false;
+          switchTab("ct");
+          loadContent();
+        };
+        fList.appendChild(btn);
+      });
+    }else{fSec.style.display="none";}
+
+    // Videos
+    const vSec=document.getElementById("pkgVideosSection");
+    const vList=document.getElementById("pkgVideosList");
+    if(videos.length){
+      vSec.style.display="block";
+      document.getElementById("pkgVCnt").textContent=videos.length;
+      vList.innerHTML="";
+      videos.forEach(v=>{
+        const btn=document.createElement("button");
+        btn.className="v-card";
+        const th=v.data?.thumbnail;
+        const dur=v.data?.duration;
+        btn.innerHTML=`${th?`<img class="v-thumb" src="${th}" onerror="this.outerHTML='<div class=\\'v-play\\'>▶</div>'">`:`<div class="v-play">▶</div>`}
+          <div class="v-body"><div class="v-name">${v.title}</div><div class="v-meta">${dur?formatDur(dur)+" · ":""}Video</div></div>
+          <span class="hd-badge">HD</span>`;
+        btn.onclick=()=>openVideo(v);
+        vList.appendChild(btn);
+      });
+    }else{vSec.style.display="none";}
+
+    if(!lives.length&&!folders.length&&!videos.length){
+      document.getElementById("pkgLoad").style.display="none";
+      document.getElementById("pkgErr").style.display="block";
+      document.getElementById("pkgErrMsg").textContent="No content found.";
+      return;
+    }
+    document.getElementById("pkgLoad").style.display="none";
+    document.getElementById("pkgData").style.display="block";
+  }catch(e){
+    document.getElementById("pkgLoad").style.display="none";
+    document.getElementById("pkgErr").style.display="block";
+    document.getElementById("pkgErrMsg").textContent=e.message;
   }
 }
 
