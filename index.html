@@ -1674,7 +1674,7 @@ body::before,body::after{display:none!important;content:none!important}
             video.src = "";
             video.load();
             try {
-                const proxyUrl = `https://proxy-test-three.vercel.app/api/proxy?action=video&content_id=${contentId}&course_id=${currentCourseId}`;
+                const proxyUrl = `https://proxy-test-three.vercel.app/api/tst?action=video&content_id=${content_id}&course_id=${course_id}&parent_id=${parent_id}&folder_id=${folder_id}`;
                 console.log("🎬 Video URL:", proxyUrl);
                 let res = await fetch(proxyUrl);
                 let data = await res.json();
